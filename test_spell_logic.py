@@ -90,19 +90,7 @@ class TestFreezeSelf:
             "BUG: freeze_effect_color must not equal the caster's color (BLACK)"
         )
 
-class TestFreezeAreaCoversCenter:
-    def test_frozen_squares_include_center(self):
-        """The center square passed to cast_freeze must be in freeze_effect_squares."""
-        game = SpellChessGame()
-        center = chess.E5
-        result = game.cast_freeze(center)
-        assert result is True, "cast_freeze should succeed"
-        assert center in game.freeze_effect_squares, (
-            f"BUG: center square {chess.square_name(center)} should be inside "
-            f"freeze_effect_squares but it is missing. "
-            f"Squares found: {[chess.square_name(s) for s in game.freeze_effect_squares]}"
-        )
-
+class TestFreezeArea:
     def test_frozen_squares_count_at_corner(self):
         """Center square on a board corner must have 4 squares in freeze_effect_squares."""
         game = SpellChessGame()
@@ -111,18 +99,6 @@ class TestFreezeAreaCoversCenter:
         assert result is True, "cast_freeze should succeed"
         assert len(game.freeze_effect_squares) == 4, (
             f"BUG: corner center {chess.square_name(center)} missing from freeze_effect_squares"
-        )
-    
-    def test_frozen_squares_set_at_corner(self):
-        """Center square on a board corner must have the correct 4 squares in freeze_effect_squares."""
-        game = SpellChessGame()
-        center = chess.A1
-        expected_squares = {chess.square_name(square) for square in [chess.A1, chess.A2, chess.B1, chess.B2]}
-        result = game.cast_freeze(center)
-        affected_squares = {chess.square_name(s) for s in game.freeze_effect_squares}
-        assert result is True, "cast_freeze should succeed"
-        assert affected_squares == expected_squares, (
-            f"BUG: frozen squares, {expected_squares - affected_squares} are missing from freeze_effect_squares"
         )
     
     def test_frozen_squares_count_at_edge(self):
@@ -135,6 +111,40 @@ class TestFreezeAreaCoversCenter:
             f"BUG: edge center {chess.square_name(center)} missing from freeze_effect_squares"
         )
     
+    def test_frozen_squares_count_at_middle(self):
+        """Center square on middle of the board must have 9 squares in freeze_effect_squares."""
+        game = SpellChessGame()
+        center = chess.E5
+        result = game.cast_freeze(center)
+        assert result is True, "cast_freeze should succeed"
+        assert len(game.freeze_effect_squares) == 9, (
+            f"BUG: center {chess.square_name(center)} missing from freeze_effect_squares"
+        )
+
+class TestFreezeValidSquares:
+    def test_frozen_squares_include_center(self):
+        """The center square passed to cast_freeze must be in freeze_effect_squares."""
+        game = SpellChessGame()
+        center = chess.E5
+        result = game.cast_freeze(center)
+        assert result is True, "cast_freeze should succeed"
+        assert center in game.freeze_effect_squares, (
+            f"BUG: center square {chess.square_name(center)} should be inside "
+            f"freeze_effect_squares but it is missing. "
+            f"Squares found: {[chess.square_name(s) for s in game.freeze_effect_squares]}"
+        )
+
+    def test_frozen_squares_set_at_corner(self):
+        """Center square on a board corner must have the correct 4 squares in freeze_effect_squares."""
+        game = SpellChessGame()
+        center = chess.A1
+        expected_squares = {chess.square_name(square) for square in [chess.A1, chess.A2, chess.B1, chess.B2]}
+        result = game.cast_freeze(center)
+        affected_squares = {chess.square_name(s) for s in game.freeze_effect_squares}
+        assert result is True, "cast_freeze should succeed"
+        assert affected_squares == expected_squares, (
+            f"BUG: frozen squares, {expected_squares - affected_squares} are missing from freeze_effect_squares"
+        )
     def test_frozen_squares_set_at_edge(self):
         """Center square on a board edge must have the correct 6 squares in freeze_effect_squares."""
         game = SpellChessGame()
@@ -145,16 +155,6 @@ class TestFreezeAreaCoversCenter:
         assert result is True, "cast_freeze should succeed"
         assert affected_squares == expected_squares, (
             f"BUG: frozen squares, {expected_squares - affected_squares} are missing from freeze_effect_squares"
-        )
-    
-    def test_frozen_squares_count_at_middle(self):
-        """Center square on middle of the board must have 9 squares in freeze_effect_squares."""
-        game = SpellChessGame()
-        center = chess.E5
-        result = game.cast_freeze(center)
-        assert result is True, "cast_freeze should succeed"
-        assert len(game.freeze_effect_squares) == 9, (
-            f"BUG: center {chess.square_name(center)} missing from freeze_effect_squares"
         )
     
     def test_frozen_squares_set_at_middle(self):
