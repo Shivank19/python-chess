@@ -43,3 +43,49 @@ class TestNewGameResetsBoard:
 #  Write tests that check the rules from SPELL_CHESS_RULES.md.        #
 #  If a test fails, you've found a bug — document it!                 #
 # ------------------------------------------------------------------ #
+class TestFreezeOpponent:
+    def test_white_casts_freeze_opponent_is_black(self):
+        """When White casts Freeze the frozen color must be BLACK."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE, "It should be white's turn"
+        result = game.cast_freeze(chess.E5)
+        assert game.current_turn() == chess.WHITE, "It should be white's turn even after casting spell"
+        assert result is True, "cast_freeze should succeed on a fresh game"
+        assert game.freeze_effect_color == chess.BLACK, (
+            "BUG: freeze_effect_color should be BLACK (opponent) after White casts; "
+            f"got {game.freeze_effect_color}"
+        )
+
+    def test_black_casts_freeze_opponent_is_white(self):
+        """When Black casts Freeze the frozen color must be WHITE."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE, "It should be white's turn"  
+        game.make_move(chess.E2, chess.E4)
+        assert game.current_turn() == chess.BLACK, "It should be black's turn"
+        result = game.cast_freeze(chess.E4)
+        assert game.current_turn() == chess.BLACK, "It should be black's turn even after casting spell"
+        assert result is True, "cast_freeze should succeed for Black on their first turn"
+        assert game.freeze_effect_color == chess.WHITE, (
+            "BUG: freeze_effect_color should be WHITE (opponent) after Black casts; "
+            f"got {game.freeze_effect_color}"
+        )
+
+class TestFreezeSelf:
+    def test_freeze_effect_color_is_not_caster_white(self):
+        """After White casts, the frozen color must NOT equal WHITE (the caster)."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE, "It should be white's turn"
+        game.cast_freeze(chess.D4)
+        assert game.freeze_effect_color != chess.WHITE, (
+            "BUG: freeze_effect_color must not equal the caster's color (WHITE)"
+        )
+
+    def test_freeze_effect_color_is_not_caster_black(self):
+        """After Black casts, the frozen color must NOT equal BLACK (the caster)."""
+        game = SpellChessGame()
+        game.make_move(chess.D2, chess.D4)
+        assert game.current_turn() == chess.BLACK, "It should be black's turn"
+        game.cast_freeze(chess.D5)
+        assert game.freeze_effect_color != chess.BLACK, (
+            "BUG: freeze_effect_color must not equal the caster's color (BLACK)"
+        )
