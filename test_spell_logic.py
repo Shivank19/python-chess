@@ -174,7 +174,7 @@ class TestFreezeValidSquares:
 
 
 class TestFreezeDuration:
-    """Freeze should last for exactly one opponent turn."""
+    # Freeze should last for exactly one opponent turn.
 
     def test_freeze_expires_after_frozen_player_completes_one_move(self):
         game = SpellChessGame()
