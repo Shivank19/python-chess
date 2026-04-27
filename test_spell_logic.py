@@ -16,7 +16,7 @@ from spell_logic import SpellChessGame, squares_in_3x3, squares_in_jump_range
 
 
 # ------------------------------------------------------------------ #
-#  Demo tests — provided to students as examples                      #
+#  Demo tests - provided to students as examples                      #
 # ------------------------------------------------------------------ #
 
 class TestFreezeTarget:
@@ -43,7 +43,7 @@ class TestNewGameResetsBoard:
 # ------------------------------------------------------------------ #
 #  YOUR TESTS GO BELOW                                                #
 #  Write tests that check the rules from SPELL_CHESS_RULES.md.        #
-#  If a test fails, you've found a bug — document it!                 #
+#  If a test fails, you've found a bug - document it!                 #
 # ------------------------------------------------------------------ #
 class TestFreezeOpponent:
     def test_white_casts_freeze_opponent_is_black(self):
@@ -136,6 +136,123 @@ class TestFreezeValidSquares:
             f"Squares found: {[chess.square_name(s) for s in game.freeze_effect_squares]}"
         )
 
+class TestCenterSquareIncluded:
+        """The center square itself must always be in the result."""
+
+        def test_center_included_for_every_square(self):
+            failures = [
+                chess.square_name(sq)
+                for sq in chess.SQUARES
+                if sq not in squares_in_3x3(sq)
+            ]
+            assert failures == [], f"Center missing for: {failures}"
+
+        def test_center_corner_a1(self):
+            assert chess.A1 in squares_in_3x3(chess.A1)
+
+        def test_center_corner_h1(self):
+            assert chess.H1 in squares_in_3x3(chess.H1)
+
+        def test_center_corner_a8(self):
+            assert chess.A8 in squares_in_3x3(chess.A8)
+
+        def test_center_corner_h8(self):
+            assert chess.H8 in squares_in_3x3(chess.H8)
+
+        def test_center_left_edge(self):
+            assert chess.A4 in squares_in_3x3(chess.A4)
+
+        def test_center_right_edge(self):
+            assert chess.H5 in squares_in_3x3(chess.H5)
+
+        def test_center_bottom_edge(self):
+            assert chess.E1 in squares_in_3x3(chess.E1)
+
+        def test_center_top_edge(self):
+            assert chess.E8 in squares_in_3x3(chess.E8)
+
+
+class TestSquareCount:
+    """Mid-board → 9, edge → 6, corner → 4."""
+
+    def test_midboard_e4(self):
+        assert len(squares_in_3x3(chess.E4)) == 9
+
+    def test_midboard_d5(self):
+        assert len(squares_in_3x3(chess.D5)) == 9
+
+    def test_left_edge_a4(self):
+        assert len(squares_in_3x3(chess.A4)) == 6
+
+    def test_right_edge_h5(self):
+        assert len(squares_in_3x3(chess.H5)) == 6
+
+    def test_bottom_edge_e1(self):
+        assert len(squares_in_3x3(chess.E1)) == 6
+
+    def test_top_edge_e8(self):
+        assert len(squares_in_3x3(chess.E8)) == 6
+
+    def test_corner_a1(self):
+        assert len(squares_in_3x3(chess.A1)) == 4
+
+    def test_corner_h1(self):
+        assert len(squares_in_3x3(chess.H1)) == 4
+
+    def test_corner_a8(self):
+        assert len(squares_in_3x3(chess.A8)) == 4
+
+    def test_corner_h8(self):
+        assert len(squares_in_3x3(chess.H8)) == 4
+
+
+class TestExactMembership:
+    """Exact set checks — no missing squares, no extra squares."""
+
+    def test_a1_exact(self):
+        assert squares_in_3x3(chess.A1) == {chess.A1, chess.B1, chess.A2, chess.B2}
+
+    def test_h1_exact(self):
+        assert squares_in_3x3(chess.H1) == {chess.G1, chess.H1, chess.G2, chess.H2}
+
+    def test_a8_exact(self):
+        assert squares_in_3x3(chess.A8) == {chess.A7, chess.B7, chess.A8, chess.B8}
+
+    def test_h8_exact(self):
+        assert squares_in_3x3(chess.H8) == {chess.G7, chess.H7, chess.G8, chess.H8}
+
+    def test_a4_exact(self):
+        assert squares_in_3x3(chess.A4) == {
+            chess.A3, chess.B3, chess.A4, chess.B4, chess.A5, chess.B5
+        }
+
+    def test_e1_exact(self):
+        assert squares_in_3x3(chess.E1) == {
+            chess.D1, chess.E1, chess.F1, chess.D2, chess.E2, chess.F2
+        }
+
+    def test_e8_exact(self):
+        assert squares_in_3x3(chess.E8) == {
+            chess.D7, chess.E7, chess.F7, chess.D8, chess.E8, chess.F8
+        }
+
+    def test_exact_match_all_64_squares(self):
+        def expected(sq):
+            cf, cr = chess.square_file(sq), chess.square_rank(sq)
+            return {
+                chess.square(cf + df, cr + dr)
+                for df in (-1, 0, 1) for dr in (-1, 0, 1)
+                if 0 <= cf + df < 8 and 0 <= cr + dr < 8
+            }
+        failures = []
+        for sq in chess.SQUARES:
+            got, want = squares_in_3x3(sq), expected(sq)
+            if got != want:
+                failures.append(
+                    f"{chess.square_name(sq)}: missing={[chess.square_name(s) for s in want - got]}"
+                )
+        assert failures == [], "Mismatches:\n" + "\n".join(failures)
+
     def test_frozen_squares_set_at_corner(self):
         """Center square on a board corner must have the correct 4 squares in freeze_effect_squares."""
         game = SpellChessGame()
@@ -170,6 +287,92 @@ class TestFreezeValidSquares:
         assert affected_squares == expected_squares, (
             f"BUG: frozen squares, {expected_squares - affected_squares} are missing from freeze_effect_squares"
         )
+
+
+#  S1-T05: Tests for Freeze duration and Cooldown conditions
+
+
+class TestFreezeDuration:
+    # Freeze should last for exactly one opponent turn.
+
+    def test_freeze_expires_after_frozen_player_completes_one_move(self):
+        game = SpellChessGame()
+
+        assert game.cast_freeze(chess.E6) is True
+        assert game.freeze_effect_plies_left == 1
+
+        # White's normal move hands the turn to Black; the freeze is still active.
+        assert game.make_move(chess.G1, chess.F3) is True
+        assert game.current_turn() == chess.BLACK
+        assert game.freeze_effect_plies_left == 1
+
+        # After Black completes one move, the one-turn freeze must be cleared.
+        assert game.make_move(chess.A7, chess.A6) is True
+        assert game.current_turn() == chess.WHITE
+        assert game.freeze_effect_color is None
+        assert game.freeze_effect_squares == set()
+        assert game.freeze_effect_plies_left == 0
+
+
+class TestFreezeCooldown:
+    # Freeze cooldown should decrement only at the start of the caster's turns
+    def test_freeze_cooldown_counts_down_on_casters_turn_starts(self):
+        game = SpellChessGame()
+
+        assert game.cast_freeze(chess.H8) is True
+        assert game.freeze_cooldown[chess.WHITE] == 3
+
+        # Switching to Black should not reduce White's cooldown count
+        assert game.make_move(chess.G1, chess.F3) is True
+        assert game.current_turn() == chess.BLACK
+        assert game.freeze_cooldown[chess.WHITE] == 3
+
+        # At the start of White's next turn, cooldown should drop from 3 to 2
+        assert game.make_move(chess.A7, chess.A6) is True
+        assert game.current_turn() == chess.WHITE
+        assert game.freeze_cooldown[chess.WHITE] == 2
+        assert game.cast_freeze(chess.A1) is False
+
+        # The following White player's turns continue the countdown: 2 to 1 to 0
+        assert game.make_move(chess.B1, chess.C3) is True
+        assert game.make_move(chess.B7, chess.B6) is True
+        assert game.current_turn() == chess.WHITE
+        assert game.freeze_cooldown[chess.WHITE] == 1
+        assert game.cast_freeze(chess.A1) is False
+
+        assert game.make_move(chess.G2, chess.G3) is True
+        assert game.make_move(chess.C7, chess.C6) is True
+        assert game.current_turn() == chess.WHITE
+        assert game.freeze_cooldown[chess.WHITE] == 0
+        assert game.cast_freeze(chess.A1) is True
+
+
+
+#  S1-T06: Regression Tests for Freeze implementation turn-order
+class TestFreezeImplementationTurnOrder:
+    # Implementing freeze timing should not break normal turn flow.
+    def test_normal_moves_alternate_turns_without_spell_side_effects(self):
+        game = SpellChessGame()
+
+        assert game.current_turn() == chess.WHITE
+        assert game.make_move(chess.E2, chess.E4) is True
+        assert game.current_turn() == chess.BLACK
+        assert game.make_move(chess.E7, chess.E5) is True
+        assert game.current_turn() == chess.WHITE
+
+    def test_freeze_lifecycle_preserves_turn_order(self):
+        game = SpellChessGame()
+
+        assert game.current_turn() == chess.WHITE
+        assert game.cast_freeze(chess.H8) is True
+        assert game.current_turn() == chess.WHITE
+
+        assert game.make_move(chess.G1, chess.F3) is True
+        assert game.current_turn() == chess.BLACK
+
+        assert game.make_move(chess.A7, chess.A6) is True
+        assert game.current_turn() == chess.WHITE
+
 
 class TestJumpSpellValidity:
 
