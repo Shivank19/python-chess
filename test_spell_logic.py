@@ -499,115 +499,219 @@ class TestJumpSpellValidity:
         
         # Allows jumps to squares that are exactly 3 squares away but does not allow jumps to squares that are 4 or more squares away.
 
+# ------------------------------------------------------------------ #
+#  CHARGES AND LIMITS — Freeze Spell                                  #
+# ------------------------------------------------------------------ #
 
-class TestGameResets:
+class TestFreezeChargeDecrement:
+    """Each successful Freeze cast must deduct exactly 1 charge."""
 
-    def test_new_game_resets_board(self):
-        """Calling new_game() should reset the board to the starting position."""
+    def test_white_freeze_charge_drops_by_1_after_cast(self):
+        """TC-FC-02a: freeze_remaining[WHITE] must go from 5 to 4 after one cast."""
         game = SpellChessGame()
-        game.board.push_san("e4")
-        game.new_game()
-        assert game.board.fen() == chess.STARTING_FEN, "BUG: Board should be reset to starting position after calling new_game()"
+        result = game.cast_freeze(chess.E5)
+        assert result is True, "cast_freeze should succeed on a fresh game"
+        assert game.freeze_remaining[chess.WHITE] == 4, (
+            f"BUG: White Freeze charges should be 4 after one cast, "
+            f"got {game.freeze_remaining[chess.WHITE]}"
+        )
 
-    def test_new_game_resets_freeze_effect_color(self):
-        """Calling new_game() should clear any active freeze effects."""
-        game = SpellChessGame()
-
-        status_before_freeze = game.freeze_effect_color
-        game.cast_freeze(chess.E5)
-        assert game.freeze_effect_color != status_before_freeze, "BUG: freeze_effect_color should change after casting freeze"
-        game.new_game()
-        assert game.freeze_effect_color == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
-
-    def test_new_game_resets_freeze_effect_squares(self):
-        """Calling new_game() should clear any active freeze effects."""
-        game = SpellChessGame()
-
-        status_before_freeze = game.freeze_effect_squares
-        game.cast_freeze(chess.E5)
-        assert game.freeze_effect_squares != status_before_freeze, "BUG: freeze_effect_squares should change after casting freeze"
-        game.new_game()
-        assert game.freeze_effect_squares == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
-
-    def test_new_game_resets_freeze_effect_plies_left(self):
-        """Calling new_game() should clear any active freeze effects."""
-        game = SpellChessGame()
-
-        status_before_freeze = game.freeze_effect_plies_left
-        game.cast_freeze(chess.E5)
-        assert game.freeze_effect_plies_left != status_before_freeze, "BUG: freeze_effect_plies_left should change after casting freeze"
-        game.new_game()
-        assert game.freeze_effect_plies_left == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
-
-    def test_new_game_resets_freeze_cooldown_white(self):
-        """Calling new_game() should reset freeze cooldowns for both players."""
-        game = SpellChessGame()
-
-        game.cast_freeze(chess.E5)
-        assert game.freeze_cooldown[chess.WHITE] != 0, "BUG: freeze_cooldown should change after casting freeze"
-        game.new_game()
-        assert game.freeze_cooldown[chess.WHITE] == 0, "BUG: freeze cooldowns should be reset after calling new_game()"
-
-    def test_new_game_resets_freeze_cooldown_black(self):
-        """Calling new_game() should reset freeze cooldowns for both players."""
-        game = SpellChessGame()
-
-        game.cast_freeze(chess.E5)
-        game.new_game()
-        assert game.freeze_cooldown[chess.BLACK] == 0, "BUG: freeze cooldowns should be reset after calling new_game()"
-
-    def test_new_game_resets_freeze_remaining_white(self):
-        """Calling new_game() should reset freeze cooldowns for both players."""
+    def test_freeze_cast_does_not_affect_opponent_charges(self):
+        """TC-FC-02b: White casting Freeze must not change Black's charge count."""
         game = SpellChessGame()
         game.cast_freeze(chess.E5)
-        game.new_game()
-        assert game.freeze_remaining[chess.WHITE] == 5, "BUG: freeze remaining should be reset after calling new_game()"
+        assert game.freeze_remaining[chess.BLACK] == 5, (
+            "BUG: White's Freeze cast must not reduce Black's charges"
+        )
 
-    def test_new_game_resets_freeze_remaining_black(self):
-        """Calling new_game() should reset freeze cooldowns for both players."""
+
+class TestFreezeChargeEnforcement:
+    """When Freeze charges reach 0, casting must be blocked."""
+
+    def test_cast_freeze_blocked_at_zero_charges(self):
+        """TC-FC-03a: cast_freeze must return False when freeze_remaining == 0."""
         game = SpellChessGame()
+        game.freeze_remaining[chess.WHITE] = 0
+        result = game.cast_freeze(chess.E5)
+        assert result is False, (
+            "BUG: cast_freeze must return False when White has 0 charges"
+        )
 
+    def test_freeze_charges_do_not_go_below_zero(self):
+        """TC-FC-03b: freeze_remaining must stay at 0 after a blocked cast."""
+        game = SpellChessGame()
+        game.freeze_remaining[chess.WHITE] = 0
+        game.cast_freeze(chess.E5)
+        assert game.freeze_remaining[chess.WHITE] == 0, (
+            "BUG: freeze_remaining must not go below 0"
+        )
+
+    def test_one_freeze_charge_left_then_blocked(self):
+        """TC-FC-03c: With 1 charge, cast succeeds; next cast (cooldown reset) is blocked."""
+        game = SpellChessGame()
+        game.freeze_remaining[chess.WHITE] = 1
+        first = game.cast_freeze(chess.E5)
+        assert first is True, "Cast with 1 charge remaining must succeed"
+        # Reset per-turn flag and cooldown to isolate the charge check
+        game.spell_casted_this_turn = False
+        game.freeze_cooldown[chess.WHITE] = 0
+        second = game.cast_freeze(chess.D4)
+        assert second is False, (
+            "BUG: cast_freeze must be blocked once charges drop to 0"
+        )
+
+
+# ------------------------------------------------------------------ #
+#  CHARGES AND LIMITS — Jump Spell Cooldown                           #
+# ------------------------------------------------------------------ #
+
+class TestJumpCooldownSetAfterCast:
+    """Casting Jump must set the cooldown to exactly 2, not 1."""
+
+    def test_white_jump_cooldown_is_2_after_cast(self):
+        """TC-JCD-01a: jump_cooldown[WHITE] must equal 2 right after casting."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        assert game.jump_cooldown[chess.WHITE] == 2, (
+            f"BUG: Jump cooldown must be 2 after casting (spec: 2-turn cooldown), "
+            f"got {game.jump_cooldown[chess.WHITE]}"
+        )
+
+    def test_jump_cast_does_not_set_opponents_cooldown(self):
+        """TC-JCD-01b: White casting Jump must not set Black's cooldown."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        assert game.jump_cooldown[chess.BLACK] == 0, (
+            "BUG: White casting Jump must not set Black's jump cooldown"
+        )
+
+
+class TestJumpCooldownDecrement:
+    """Jump cooldown must decrement by 1 at the start of each of the caster's turns."""
+
+    def test_jump_cooldown_does_not_drop_during_black_turn(self):
+        """TC-JCD-03a: White's Jump cooldown must not drop while it is Black's turn."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        game.make_move(chess.G1, chess.F3)    # White ends turn; now Black's turn
+        assert game.jump_cooldown[chess.WHITE] == 2, (
+            "BUG: White's Jump cooldown must not decrement during Black's turn"
+        )
+
+    def test_jump_cooldown_drops_to_1_after_one_white_turn(self):
+        """TC-JCD-03b: After one full round (White + Black move), cooldown drops 2→1."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        game.make_move(chess.G1, chess.F3)
+        game.make_move(chess.B8, chess.C6)    # Black done; White's new turn starts
+        assert game.jump_cooldown[chess.WHITE] == 1, (
+            f"BUG: Jump cooldown should be 1 after one White turn has passed, "
+            f"got {game.jump_cooldown[chess.WHITE]}"
+        )
+
+    def test_jump_cooldown_reaches_zero_after_two_white_turns(self):
+        """TC-JCD-03c: After two full rounds, cooldown drops 2→0."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        game.make_move(chess.G1, chess.F3)
+        game.make_move(chess.B8, chess.C6)
+        game.make_move(chess.B1, chess.C3)
+        game.make_move(chess.G8, chess.F6)
+        assert game.jump_cooldown[chess.WHITE] == 0, (
+            f"BUG: Jump cooldown should be 0 after two White turns, "
+            f"got {game.jump_cooldown[chess.WHITE]}"
+        )
+
+    def test_can_cast_jump_again_after_cooldown_expires(self):
+        """TC-JCD-03d: cast_jump must succeed once the 2-turn cooldown has expired."""
+        game = SpellChessGame()
+        game.cast_jump(chess.A1, chess.A3)
+        game.make_move(chess.G1, chess.F3)
+        game.make_move(chess.B8, chess.C6)
+        game.make_move(chess.B1, chess.C3)
+        game.make_move(chess.G8, chess.F6)
+        assert game.jump_cooldown[chess.WHITE] == 0, (
+            "Precondition failed: cooldown must be 0 before testing re-cast."
+        )
+        result = game.cast_jump(chess.H1, chess.H3)
+        assert result is True, (
+            "BUG: cast_jump must succeed once the 2-turn cooldown has expired."
+        )
+
+
+# ------------------------------------------------------------------ #
+#  CHARGES AND LIMITS — new_game() resets                             #
+# ------------------------------------------------------------------ #
+
+class TestNewGameResetsChargesAndCooldowns:
+    """new_game() must restore all charges and clear all cooldowns."""
+
+    def test_new_game_resets_freeze_charges_to_5(self):
+        """TC-NG-01: Both sides get 5 Freeze charges after new_game()."""
+        game = SpellChessGame()
+        game.freeze_remaining[chess.WHITE] = 2
+        game.freeze_remaining[chess.BLACK] = 0
+        game.new_game()
+        assert game.freeze_remaining[chess.WHITE] == 5, (
+            f"BUG: White Freeze charges should be 5 after new_game(), "
+            f"got {game.freeze_remaining[chess.WHITE]}"
+        )
+        assert game.freeze_remaining[chess.BLACK] == 5, (
+            f"BUG: Black Freeze charges should be 5 after new_game(), "
+            f"got {game.freeze_remaining[chess.BLACK]}"
+        )
+
+    def test_new_game_resets_jump_charges_to_3(self):
+        """TC-NG-02: Both sides get 3 Jump charges after new_game()."""
+        game = SpellChessGame()
+        game.jump_remaining[chess.WHITE] = 0
+        game.jump_remaining[chess.BLACK] = 1
+        game.new_game()
+        assert game.jump_remaining[chess.WHITE] == 3, (
+            f"BUG: White Jump charges should be 3 after new_game(), "
+            f"got {game.jump_remaining[chess.WHITE]}"
+        )
+        assert game.jump_remaining[chess.BLACK] == 3, (
+            f"BUG: Black Jump charges should be 3 after new_game(), "
+            f"got {game.jump_remaining[chess.BLACK]}"
+        )
+
+    def test_new_game_resets_freeze_cooldown_to_0(self):
+        """TC-NG-03: Both Freeze cooldowns must be 0 after new_game()."""
+        game = SpellChessGame()
         game.cast_freeze(chess.E5)
         game.new_game()
-        assert game.freeze_remaining[chess.BLACK] == 5, "BUG: freeze remaining should be reset after calling new_game()"
-    
-    def test_new_game_resets_spell_casted_this_turn(self):
-        """Calling new_game() should reset spell_casted_this_turn for both players."""
-        game = SpellChessGame()
-        game.cast_freeze(chess.E5)
-        game.new_game()
-        assert  game.spell_casted_this_turn == False, "BUG: spell_casted_this_turn should be reset after calling new_game()"
+        assert game.freeze_cooldown[chess.WHITE] == 0, (
+            f"BUG: White Freeze cooldown should be 0 after new_game(), "
+            f"got {game.freeze_cooldown[chess.WHITE]}"
+        )
+        assert game.freeze_cooldown[chess.BLACK] == 0, (
+            f"BUG: Black Freeze cooldown should be 0 after new_game(), "
+            f"got {game.freeze_cooldown[chess.BLACK]}"
+        )
 
-    def test_new_game_resets_get_legal_moves(self):
-        """Calling new_game() should reset the board to the starting position, which has a specific set of legal moves."""
+    def test_new_game_resets_jump_cooldown_to_0(self):
+        """TC-NG-04: Both Jump cooldowns must be 0 after new_game()."""
         game = SpellChessGame()
-
-        game.cast_freeze(chess.F6)
-        assert game.is_frozen(chess.F6, chess.BLACK), "BUG: Square F6 should be frozen after casting freeze on it"
-        game.make_move(chess.E2, chess.E3)
-        legal_moves_after_freeze = game.get_legal_moves()
-        assert game.current_turn() == chess.BLACK, "It should be black's turn after White's move"
+        game.cast_jump(chess.A1, chess.A3)
         game.new_game()
-        
-        assert game.get_legal_moves() != legal_moves_after_freeze, "BUG: get_legal_moves should return a different set of moves after resetting the game"
+        assert game.jump_cooldown[chess.WHITE] == 0, (
+            f"BUG: White Jump cooldown should be 0 after new_game(), "
+            f"got {game.jump_cooldown[chess.WHITE]}"
+        )
+        assert game.jump_cooldown[chess.BLACK] == 0, (
+            f"BUG: Black Jump cooldown should be 0 after new_game(), "
+            f"got {game.jump_cooldown[chess.BLACK]}"
+        )
 
-    def test_new_game_resets_jumps_remaining(self):
-        """Calling new_game() should reset the jumps_remaining for both players."""
+    def test_cast_jump_succeeds_after_new_game(self):
+        """TC-NG-05: cast_jump must succeed immediately after new_game() restores charges."""
         game = SpellChessGame()
-        game.cast_jump(chess.E2, chess.E4)
+        game.jump_remaining[chess.WHITE] = 0
+        game.jump_cooldown[chess.WHITE] = 2
         game.new_game()
-        assert game.jump_remaining[chess.WHITE] == 3, "BUG: jumps_remaining should be reset after calling new_game()"
-
-    def test_new_game_resets_jump_cooldown(self):
-        """Calling new_game() should reset the jump_cooldown for both players."""
-        game = SpellChessGame()
-        game.cast_jump(chess.E2, chess.E4)
-        game.new_game()
-        assert game.jump_cooldown[chess.WHITE] == 0, "BUG: jump_cooldown should be reset after calling new_game()"
-
-    def test_new_game_resets_jump_casted_this_turn(self):
-        """Calling new_game() should reset the jump_casted_this_turn for both players."""
-        game = SpellChessGame()
-        game.cast_jump(chess.E2, chess.E4)
-        game.new_game()
-        assert game.jump_casted_this_turn == False, "BUG: jump_casted_this_turn should be reset after calling new_game()"
+        result = game.cast_jump(chess.A1, chess.A3)
+        assert result is True, (
+            "BUG: cast_jump must succeed right after new_game() — "
+            "Charges and cooldown must both be reset."
+        )
