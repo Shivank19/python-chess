@@ -499,6 +499,118 @@ class TestJumpSpellValidity:
         
         # Allows jumps to squares that are exactly 3 squares away but does not allow jumps to squares that are 4 or more squares away.
 
+
+class TestGameResets:
+
+    def test_new_game_resets_board(self):
+        """Calling new_game() should reset the board to the starting position."""
+        game = SpellChessGame()
+        game.board.push_san("e4")
+        game.new_game()
+        assert game.board.fen() == chess.STARTING_FEN, "BUG: Board should be reset to starting position after calling new_game()"
+
+    def test_new_game_resets_freeze_effect_color(self):
+        """Calling new_game() should clear any active freeze effects."""
+        game = SpellChessGame()
+
+        status_before_freeze = game.freeze_effect_color
+        game.cast_freeze(chess.E5)
+        assert game.freeze_effect_color != status_before_freeze, "BUG: freeze_effect_color should change after casting freeze"
+        game.new_game()
+        assert game.freeze_effect_color == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
+
+    def test_new_game_resets_freeze_effect_squares(self):
+        """Calling new_game() should clear any active freeze effects."""
+        game = SpellChessGame()
+
+        status_before_freeze = game.freeze_effect_squares
+        game.cast_freeze(chess.E5)
+        assert game.freeze_effect_squares != status_before_freeze, "BUG: freeze_effect_squares should change after casting freeze"
+        game.new_game()
+        assert game.freeze_effect_squares == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
+
+    def test_new_game_resets_freeze_effect_plies_left(self):
+        """Calling new_game() should clear any active freeze effects."""
+        game = SpellChessGame()
+
+        status_before_freeze = game.freeze_effect_plies_left
+        game.cast_freeze(chess.E5)
+        assert game.freeze_effect_plies_left != status_before_freeze, "BUG: freeze_effect_plies_left should change after casting freeze"
+        game.new_game()
+        assert game.freeze_effect_plies_left == status_before_freeze, "BUG: freeze effect should be cleared after calling new_game()"
+
+    def test_new_game_resets_freeze_cooldown_white(self):
+        """Calling new_game() should reset freeze cooldowns for both players."""
+        game = SpellChessGame()
+
+        game.cast_freeze(chess.E5)
+        assert game.freeze_cooldown[chess.WHITE] != 0, "BUG: freeze_cooldown should change after casting freeze"
+        game.new_game()
+        assert game.freeze_cooldown[chess.WHITE] == 0, "BUG: freeze cooldowns should be reset after calling new_game()"
+
+    def test_new_game_resets_freeze_cooldown_black(self):
+        """Calling new_game() should reset freeze cooldowns for both players."""
+        game = SpellChessGame()
+
+        game.cast_freeze(chess.E5)
+        game.new_game()
+        assert game.freeze_cooldown[chess.BLACK] == 0, "BUG: freeze cooldowns should be reset after calling new_game()"
+
+    def test_new_game_resets_freeze_remaining_white(self):
+        """Calling new_game() should reset freeze cooldowns for both players."""
+        game = SpellChessGame()
+        game.cast_freeze(chess.E5)
+        game.new_game()
+        assert game.freeze_remaining[chess.WHITE] == 5, "BUG: freeze remaining should be reset after calling new_game()"
+
+    def test_new_game_resets_freeze_remaining_black(self):
+        """Calling new_game() should reset freeze cooldowns for both players."""
+        game = SpellChessGame()
+
+        game.cast_freeze(chess.E5)
+        game.new_game()
+        assert game.freeze_remaining[chess.BLACK] == 5, "BUG: freeze remaining should be reset after calling new_game()"
+    
+    def test_new_game_resets_spell_casted_this_turn(self):
+        """Calling new_game() should reset spell_casted_this_turn for both players."""
+        game = SpellChessGame()
+        game.cast_freeze(chess.E5)
+        game.new_game()
+        assert  game.spell_casted_this_turn == False, "BUG: spell_casted_this_turn should be reset after calling new_game()"
+
+    def test_new_game_resets_get_legal_moves(self):
+        """Calling new_game() should reset the board to the starting position, which has a specific set of legal moves."""
+        game = SpellChessGame()
+
+        game.cast_freeze(chess.F6)
+        assert game.is_frozen(chess.F6, chess.BLACK), "BUG: Square F6 should be frozen after casting freeze on it"
+        game.make_move(chess.E2, chess.E3)
+        legal_moves_after_freeze = game.get_legal_moves()
+        assert game.current_turn() == chess.BLACK, "It should be black's turn after White's move"
+        game.new_game()
+        
+        assert game.get_legal_moves() != legal_moves_after_freeze, "BUG: get_legal_moves should return a different set of moves after resetting the game"
+
+    def test_new_game_resets_jumps_remaining(self):
+        """Calling new_game() should reset the jumps_remaining for both players."""
+        game = SpellChessGame()
+        game.cast_jump(chess.E2, chess.E4)
+        game.new_game()
+        assert game.jump_remaining[chess.WHITE] == 3, "BUG: jumps_remaining should be reset after calling new_game()"
+
+    def test_new_game_resets_jump_cooldown(self):
+        """Calling new_game() should reset the jump_cooldown for both players."""
+        game = SpellChessGame()
+        game.cast_jump(chess.E2, chess.E4)
+        game.new_game()
+        assert game.jump_cooldown[chess.WHITE] == 0, "BUG: jump_cooldown should be reset after calling new_game()"
+
+    def test_new_game_resets_jump_casted_this_turn(self):
+        """Calling new_game() should reset the jump_casted_this_turn for both players."""
+        game = SpellChessGame()
+        game.cast_jump(chess.E2, chess.E4)
+        game.new_game()
+        assert game.jump_casted_this_turn == False, "BUG: jump_casted_this_turn should be reset after calling new_game()"
 # ------------------------------------------------------------------ #
 #  CHARGES AND LIMITS — Freeze Spell                                  #
 # ------------------------------------------------------------------ #
