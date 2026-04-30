@@ -236,7 +236,7 @@ class SpellChessGame:
                     self.freeze_effect_squares = set()
                     self.freeze_effect_plies_left = 0
         self.on_turn_start()
-        self.board.turn = not self.board.turn
+        # self.board.turn = not self.board.turn
 
     # ----- making moves -----
 
