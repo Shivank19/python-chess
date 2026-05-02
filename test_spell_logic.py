@@ -50,7 +50,10 @@ class TestFreezeOpponent:
         game = SpellChessGame()
         assert game.current_turn() == chess.WHITE
         result = game.cast_freeze(chess.E5)
+
+        # ensuring casting spell does not switch turn
         assert game.current_turn() == chess.WHITE
+
         assert result is True
         assert game.freeze_effect_color == chess.BLACK
 
@@ -59,7 +62,10 @@ class TestFreezeOpponent:
         game = SpellChessGame()
         assert game.current_turn() == chess.WHITE
         game.make_move(chess.E2, chess.E4)
+
+        # ensuring turn switches after WHITE's move
         assert game.current_turn() == chess.BLACK
+
         result = game.cast_freeze(chess.E4)
         assert game.current_turn() == chess.BLACK
         assert result is True
@@ -85,9 +91,13 @@ class TestFreezeSelf:
     def test_freeze_on_self_does_not_affect_self(self):
         game = SpellChessGame()
         assert game.current_turn() == chess.WHITE
+
+        # list of legal moves before freezing
         options_before_cast = game.get_legal_moves()
         result = game.cast_freeze(chess.E2)
         assert result is True
+
+        # list of legal moves after freezing
         options_after_cast = game.get_legal_moves()
         assert options_before_cast == options_after_cast
         assert game.freeze_effect_color != chess.WHITE
@@ -104,6 +114,7 @@ class TestCenterSquareIncluded:
             ]
             assert failures == [], f"Center missing for: {failures}"
 
+        # checking every location on the board for casting freeze spell
         def test_center_corner_a1(self):
             assert chess.A1 in squares_in_3x3(chess.A1)
 
@@ -132,6 +143,7 @@ class TestCenterSquareIncluded:
 class TestSquareCount:
     """Mid-board → 9, edge → 6, corner → 4."""
 
+    # testing if the number of squares are correct for casting freeze spell
     def test_midboard_e4(self):
         assert len(squares_in_3x3(chess.E4)) == 9
 
@@ -299,7 +311,7 @@ class TestJumpValid:
     def test_valid_jump_returns_true(self):
         """cast_jump should return True for a legal jump."""
         game = SpellChessGame()
-        # White knight on g1 → e3 (Chebyshev distance 2, empty square)
+        # White knight on g1 to e3 (Chebyshev distance 2, empty square)
         assert game.cast_jump(chess.G1, chess.E3) is True
 
     def test_valid_jump_moves_piece_to_destination(self):
@@ -352,15 +364,15 @@ class TestJumpEmptyDestination:
     def test_jump_rejects_occupied_destination_own_piece(self):
         """cast_jump must return False when the destination holds a friendly piece."""
         game = SpellChessGame()
-        # White knight g1 → g2 (White pawn is on g2).
+        # White knight g1 to g2 (White pawn is on g2).
         assert game.cast_jump(chess.G1, chess.G2) is False
 
     def test_jump_rejects_occupied_destination_opponent_piece(self):
         """cast_jump must return False when the destination holds an opponent piece."""
         game = SpellChessGame()
-        game.make_move(chess.E2, chess.E4)
-        game.make_move(chess.E7, chess.E5)
-        assert game.cast_jump(chess.E4, chess.E5) is False
+        game.make_move(chess.E2, chess.E4)      # moving white pawn
+        game.make_move(chess.E7, chess.E5)      # moving black pawn
+        assert game.cast_jump(chess.E4, chess.E5) is False     # trying to jump black pawn with white pawn
 
 # S1-T08
 class TestJumpRange:
@@ -368,7 +380,7 @@ class TestJumpRange:
     def test_jump_spell_jump_to_same_square(self):
         """A player should not be able to cast a Jump spell to the same square."""
         game = SpellChessGame()
-        # Try to jump to the same square
+        #  Try to jump to the same square
         result = game.cast_jump(chess.E2, chess.E2)  
         assert result is False
 
@@ -397,7 +409,6 @@ class TestJumpRange:
 
 ##########
 # S2-T01
-
 class TestFreezeCharges:
     """Freeze starts with 5 charges; each cast costs 1; 0 charges blocks casting."""
 
@@ -416,7 +427,7 @@ class TestFreezeCharges:
     def test_freeze_charge_decrements_for_black_after_successful_cast(self):
         """Black's Freeze charge must drop from 5 to 4 after one cast."""
         game = SpellChessGame()
-        game.make_move(chess.E2, chess.E4)          # White moves → Black's turn
+        game.make_move(chess.E2, chess.E4)          
         assert game.cast_freeze(chess.E4) is True
         assert game.freeze_remaining[chess.BLACK] == 4
 
@@ -449,7 +460,7 @@ class TestFreezePerTurnLimit:
         # White casts Freeze, then moves.
         assert game.cast_freeze(chess.E5) is True
         game.make_move(chess.E2, chess.E4)
-        # It is now Black's turn — Black has had no cast yet this turn.
+        # It is now Black's turn; Black has had no cast yet this turn.
         assert game.spell_casted_this_turn is False
         # Black should be able to cast on their own turn.
         assert game.cast_freeze(chess.E4) is True
@@ -457,7 +468,7 @@ class TestFreezePerTurnLimit:
     def test_freeze_charge_does_not_decrement_on_failed_cast(self):
         """A failed cast (duplicate in same turn) must not consume a charge."""
         game = SpellChessGame()
-        game.cast_freeze(chess.E5)          # succeeds, charge 5→4
+        game.cast_freeze(chess.E5)          # succeeds, charge 5 to 4
         charges_before = game.freeze_remaining[chess.WHITE]
         game.cast_freeze(chess.D4)          # fails (same-turn duplicate)
         assert game.freeze_remaining[chess.WHITE] == charges_before
@@ -480,7 +491,7 @@ class TestJumpCharges:
     def test_jump_charge_decrements_for_black_after_successful_cast(self):
         """Black's Jump charge must drop from 3 to 2 after one cast."""
         game = SpellChessGame()
-        game.make_move(chess.E2, chess.E4)          # White moves → Black's turn
+        game.make_move(chess.E2, chess.E4)          
         assert game.cast_jump(chess.G8, chess.E6) is True
         assert game.jump_remaining[chess.BLACK] == 2
 
@@ -521,7 +532,7 @@ class TestJumpPerTurnLimit:
     def test_jump_charge_does_not_decrement_on_failed_cast(self):
         """A failed cast (duplicate in same turn) must not consume a charge."""
         game = SpellChessGame()
-        game.cast_jump(chess.G1, chess.E3)          # succeeds, charge 3→2
+        game.cast_jump(chess.G1, chess.E3)          # succeeds, charge 3 to 2
         charges_before = game.jump_remaining[chess.WHITE]
         game.cast_jump(chess.B1, chess.C3)          # fails (same-turn duplicate)
         assert game.jump_remaining[chess.WHITE] == charges_before
@@ -711,10 +722,15 @@ class TestGameResets:
         game.cast_freeze(chess.F6)
         assert game.is_frozen(chess.F6, chess.BLACK)
         game.make_move(chess.E2, chess.E3)
+
+        # legal moves available to black player after opponent cast freeze spell
         legal_moves_after_freeze = game.get_legal_moves()
         assert game.current_turn() == chess.BLACK
         game.new_game()
         game.make_move(chess.E2, chess.E3)
+
+        # legal moves available to black player when opponent has not casted freeze spell
+        # this checks if freeze spell affects the available legal moves for the black player
         assert game.get_legal_moves() != legal_moves_after_freeze
 
     def test_new_game_resets_jumps_remaining(self):
@@ -755,6 +771,8 @@ class TestFrozenOriginMoveRestriction:
         game = game_with_black_e_pawn_frozen()
 
         assert game.is_frozen(chess.E7, chess.BLACK) is True
+
+        # black pawn on e7 is frozen, so it cannot move
         assert game.make_move(chess.E7, chess.E5) is False
         assert game.board.piece_at(chess.E7) == chess.Piece(chess.PAWN, chess.BLACK)
         assert game.board.piece_at(chess.E5) is None
@@ -783,7 +801,6 @@ class TestFrozenOriginUiFeedback:
         game = game_with_black_e_pawn_frozen()
 
         freeze_text = game.freeze_info_text().lower()
-        print(freeze_text)  # Debug print to check the actual text content
         assert "frozen" in freeze_text
 
 
@@ -802,6 +819,7 @@ class TestGameStateDisplayTraceability:
     def test_status_text_marks_check(self):
         game = SpellChessGame()
 
+        # making moves to put black king in check
         assert game.make_move(chess.E2, chess.E4) is True
         assert game.make_move(chess.D7, chess.D6) is True
         assert game.make_move(chess.F1, chess.B5) is True
@@ -873,10 +891,14 @@ class TestFrozenAreaCaptureAndCheck:
     """Frozen pieces are movement-restricted, but can still be captured or checked."""
     def test_white_can_capture_black_piece_inside_frozen_area(self):
         game = SpellChessGame()
+
+        # opening moves
         assert game.make_move(chess.E2, chess.E4) is True
         assert game.make_move(chess.G8, chess.F6) is True
         assert game.make_move(chess.G1, chess.F3) is True
         assert game.make_move(chess.D7, chess.D5) is True
+
+        # white player casts freeze spell
         game.freeze_effect_color = chess.BLACK
         game.freeze_effect_squares = {
             chess.D4, chess.E4, chess.F4,
@@ -885,20 +907,30 @@ class TestFrozenAreaCaptureAndCheck:
         }
         game.freeze_effect_plies_left = 1
         assert game.current_turn() == chess.WHITE
+
+        # check if black pawn on d5 is frozen
         assert game.is_frozen(chess.D5, chess.BLACK) is True
         assert game.is_frozen(chess.F6, chess.BLACK) is True
+
+        # check if white pawn on e4 can move to d5
         assert game.make_move(chess.E4, chess.D5) is True
+
+        # check if black pawn on d5 is captured
         assert game.board.piece_at(chess.D5) == chess.Piece(chess.PAWN, chess.WHITE)
         assert game.board.piece_at(chess.E4) is None
     
     def test_white_can_give_check_when_black_king_is_in_frozen_area(self):
         game = SpellChessGame()
+
+        # opening moves
         assert game.make_move(chess.E2, chess.E4) is True
         assert game.make_move(chess.E7, chess.E5) is True
         assert game.make_move(chess.D1, chess.H5) is True
         assert game.make_move(chess.B8, chess.C6) is True
         assert game.make_move(chess.F1, chess.C4) is True
         assert game.make_move(chess.G8, chess.F6) is True
+
+        # white player casts freeze spell
         game.freeze_effect_color = chess.BLACK
         game.freeze_effect_squares = {
             chess.D7, chess.E7, chess.F7,
@@ -906,8 +938,14 @@ class TestFrozenAreaCaptureAndCheck:
         }
         game.freeze_effect_plies_left = 1
         assert game.current_turn() == chess.WHITE
+
+        # check if black king on e8 is frozen
         assert game.is_frozen(chess.E8, chess.BLACK) is True
+
+        # white queen check the black king on e8
         assert game.make_move(chess.H5, chess.F7) is True
+
+        # check if white queen on f7 check the black king on e8
         assert game.board.piece_at(chess.F7) == chess.Piece(chess.QUEEN, chess.WHITE)
         assert game.board.is_check() is True
         assert "check" in game.status_text().lower()
