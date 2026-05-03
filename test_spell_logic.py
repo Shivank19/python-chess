@@ -827,3 +827,358 @@ class TestNewGameResetsChargesAndCooldowns:
             "BUG: cast_jump must succeed right after new_game() — "
             "Charges and cooldown must both be reset."
         )
+
+#################################################################################################################################
+
+# S2 Helper Functions
+def game_with_dirty_reset_state() -> SpellChessGame:
+    """Create a game with board and spell state changed before new_game()."""
+    game = SpellChessGame()
+    game.board.push_san("e4")
+    game.board.push_san("e5")
+    game.freeze_remaining[chess.WHITE] = 1
+    game.freeze_remaining[chess.BLACK] = 0
+    game.jump_remaining[chess.WHITE] = 2
+    game.jump_remaining[chess.BLACK] = 0
+    game.freeze_cooldown[chess.WHITE] = 3
+    game.freeze_cooldown[chess.BLACK] = 2
+    game.jump_cooldown[chess.WHITE] = 2
+    game.jump_cooldown[chess.BLACK] = 1
+    game.freeze_effect_color = chess.BLACK
+    game.freeze_effect_squares = {chess.E7, chess.D7, chess.F7}
+    game.freeze_effect_plies_left = 1
+    game.spell_casted_this_turn = True
+    game.freeze_targeting = True
+    game.jump_casted_this_turn = True
+    return game
+
+
+
+# S2T04
+# class TestCompleteNewGameResetBehavior:
+#     """new_game() must restore all board and spell state for a fresh match."""
+
+#     def test_new_game_resets_board_to_starting_position(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.board.fen() == chess.STARTING_FEN
+#         assert game.current_turn() == chess.WHITE
+#         assert len(list(game.board.legal_moves)) == 20
+
+#     def test_new_game_resets_freeze_charges_for_both_players(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.freeze_remaining[chess.WHITE] == 5
+#         assert game.freeze_remaining[chess.BLACK] == 5
+
+#     def test_new_game_resets_jump_charges_for_both_players(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.jump_remaining[chess.WHITE] == 3
+#         assert game.jump_remaining[chess.BLACK] == 3
+
+#     def test_new_game_resets_all_spell_cooldowns(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.freeze_cooldown[chess.WHITE] == 0
+#         assert game.freeze_cooldown[chess.BLACK] == 0
+#         assert game.jump_cooldown[chess.WHITE] == 0
+#         assert game.jump_cooldown[chess.BLACK] == 0
+
+#     def test_new_game_clears_active_freeze_effect(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.freeze_effect_color is None
+#         assert game.freeze_effect_squares == set()
+#         assert game.freeze_effect_plies_left == 0
+#         assert game.is_frozen(chess.E7, chess.BLACK) is False
+
+#     def test_new_game_clears_per_turn_spell_flags(self):
+#         game = game_with_dirty_reset_state()
+
+#         game.new_game()
+
+#         assert game.spell_casted_this_turn is False
+#         assert game.freeze_targeting is False
+#         assert game.jump_casted_this_turn is False
+
+def game_with_black_e_pawn_frozen() -> SpellChessGame:
+    """Create a focused S2 fixture with Black to move and e7 frozen."""
+    game = SpellChessGame()
+    game.board.turn = chess.BLACK
+    game.freeze_effect_color = chess.BLACK
+    game.freeze_effect_squares = {chess.E7}
+    game.freeze_effect_plies_left = 1
+    return game
+
+
+class TestFrozenAreaCaptureAndCheck:
+    """Frozen pieces are movement-restricted, but can still be captured or checked."""
+
+    def test_white_can_capture_black_piece_inside_frozen_area(self):
+        game = SpellChessGame()
+
+        assert game.make_move(chess.E2, chess.E4) is True
+        assert game.make_move(chess.G8, chess.F6) is True
+        assert game.make_move(chess.G1, chess.F3) is True
+        assert game.make_move(chess.D7, chess.D5) is True
+
+        game.freeze_effect_color = chess.BLACK
+        game.freeze_effect_squares = {
+            chess.D4, chess.E4, chess.F4,
+            chess.D5, chess.E5, chess.F5,
+            chess.D6, chess.E6, chess.F6,
+        }
+        game.freeze_effect_plies_left = 1
+
+        assert game.current_turn() == chess.WHITE
+        assert game.is_frozen(chess.D5, chess.BLACK) is True
+        assert game.is_frozen(chess.F6, chess.BLACK) is True
+
+        assert game.make_move(chess.E4, chess.D5) is True
+        assert game.board.piece_at(chess.D5) == chess.Piece(chess.PAWN, chess.WHITE)
+        assert game.board.piece_at(chess.E4) is None
+
+    def test_white_can_give_check_when_black_king_is_in_frozen_area(self):
+        game = SpellChessGame()
+
+        assert game.make_move(chess.E2, chess.E4) is True
+        assert game.make_move(chess.E7, chess.E5) is True
+        assert game.make_move(chess.D1, chess.H5) is True
+        assert game.make_move(chess.B8, chess.C6) is True
+        assert game.make_move(chess.F1, chess.C4) is True
+        assert game.make_move(chess.G8, chess.F6) is True
+
+        game.freeze_effect_color = chess.BLACK
+        game.freeze_effect_squares = {
+            chess.D7, chess.E7, chess.F7,
+            chess.D8, chess.E8, chess.F8,
+        }
+        game.freeze_effect_plies_left = 1
+
+        assert game.current_turn() == chess.WHITE
+        assert game.is_frozen(chess.E8, chess.BLACK) is True
+
+        assert game.make_move(chess.H5, chess.F7) is True
+        assert game.board.piece_at(chess.F7) == chess.Piece(chess.QUEEN, chess.WHITE)
+        assert game.board.is_check() is True
+        assert "check" in game.status_text().lower()
+
+
+# S2T05
+class TestFrozenOriginMoveRestriction:
+    """Frozen-origin moves must be rejected and filtered from legal moves."""
+
+    def test_make_move_rejects_move_from_frozen_origin(self):
+        game = game_with_black_e_pawn_frozen()
+
+        assert game.is_frozen(chess.E7, chess.BLACK) is True
+        assert game.make_move(chess.E7, chess.E5) is False
+        assert game.board.piece_at(chess.E7) == chess.Piece(chess.PAWN, chess.BLACK)
+        assert game.board.piece_at(chess.E5) is None
+
+    def test_get_legal_moves_excludes_moves_from_frozen_origin(self):
+        game = game_with_black_e_pawn_frozen()
+
+        legal_moves = set(game.get_legal_moves())
+
+        assert chess.Move(chess.E7, chess.E5) not in legal_moves
+        assert chess.Move(chess.E7, chess.E6) not in legal_moves
+        assert chess.Move(chess.G8, chess.F6) in legal_moves
+
+# S2T06
+class TestFrozenOriginUiFeedback:
+    """UI-facing helpers should support blocking and explaining frozen moves."""
+
+    def test_current_player_can_be_identified_as_frozen_for_ui_blocking(self):
+        game = game_with_black_e_pawn_frozen()
+
+        assert game.current_turn() == chess.BLACK
+        assert game.is_frozen(chess.E7, game.current_turn()) is True
+        assert game.is_frozen(chess.G8, game.current_turn()) is False
+
+    def test_freeze_info_text_mentions_frozen_pieces_for_current_player(self):
+        game = game_with_black_e_pawn_frozen()
+
+        freeze_text = game.freeze_info_text().lower()
+        print(freeze_text)  # Debug print to check the actual text content
+        assert "frozen" in freeze_text
+
+
+# S2T07
+# class TestFreezeRestrictionSmoke:
+#     """Smoke coverage for spec-defined freeze restriction scenarios."""
+
+#     def test_smoke_blocks_frozen_piece_but_allows_unfrozen_piece(self):
+#         game = game_with_black_e_pawn_frozen()
+
+#         assert game.make_move(chess.E7, chess.E5) is False
+#         assert game.make_move(chess.G8, chess.F6) is True
+
+#     def test_smoke_legal_moves_do_not_start_from_frozen_square(self):
+#         game = game_with_black_e_pawn_frozen()
+
+#         candidate_moves = game.get_legal_moves()
+
+#         assert candidate_moves
+#         assert all(move.from_square != chess.E7 for move in candidate_moves)
+
+
+#Sprint 3
+# S3T01
+class TestGameStateDisplayTraceability:
+    """Every accepted game-state display rule should have test coverage."""
+
+    def test_status_text_shows_current_player_turn(self):
+        game = SpellChessGame()
+
+        assert game.status_text() == "Turn: White."
+        game.board.turn = chess.BLACK
+        assert game.status_text() == "Turn: Black."
+
+    def test_status_text_marks_check(self):
+        game = SpellChessGame()
+
+        assert game.make_move(chess.E2, chess.E4) is True
+        assert game.make_move(chess.D7, chess.D6) is True
+        assert game.make_move(chess.F1, chess.B5) is True
+
+        status = game.status_text()
+
+        assert "Turn: Black" in status
+        assert "check" in status.lower()
+
+
+    def test_freeze_info_text_shows_current_player_charges_and_cooldown(self):
+        game = SpellChessGame()
+        # game.freeze_remaining[chess.WHITE] = 4
+        # game.freeze_remaining[chess.BLACK] = 5
+        # game.freeze_cooldown[chess.WHITE] = 3
+        # game.freeze_cooldown[chess.BLACK] = 0
+        game.cast_freeze(chess.E5)  # This will set White's charges to 4 and cooldown to 3
+
+        text = game.freeze_info_text()
+
+        assert "Freeze: 4" in text
+        assert "cooldown 3" in text
+        assert "Freeze: 2" not in text
+        game.make_move(chess.E2, chess.E4)  # End White's turn to show Black
+
+        text = game.freeze_info_text()
+
+        assert "Freeze: 5" in text
+        assert "cooldown 0" not in text
+
+    def test_jump_info_text_shows_current_player_charges_and_cooldown(self):
+        game = SpellChessGame()
+        game.jump_remaining[chess.WHITE] = 2
+        game.jump_remaining[chess.BLACK] = 1
+        game.jump_cooldown[chess.WHITE] = 1
+
+        text = game.jump_info_text()
+
+        assert "Jump: 2" in text
+        assert "cooldown 1" in text
+        assert "Jump: 1" not in text
+
+    
+# S3T02
+class TestCloseDisplayGaps:
+    """Close remaining display and state-reporting test gaps."""
+
+    def test_freeze_info_text_mentions_when_current_player_is_frozen(self):
+        game = SpellChessGame()
+        game.board.turn = chess.BLACK
+        game.freeze_effect_color = chess.BLACK
+        game.freeze_effect_squares = {chess.E7}
+        game.freeze_effect_plies_left = 1
+
+        assert "frozen" in game.freeze_info_text().lower()
+
+    def test_game_over_status_text_reports_checkmate_winner(self):
+        game = SpellChessGame()
+        game.board.push_san("f3")
+        game.board.push_san("e5")
+        game.board.push_san("g4")
+        game.board.push_san("Qh4#")
+
+        status = game.status_text()
+
+        assert status.startswith("Game over:")
+        assert "Black wins" in status
+
+# S3T03
+class TestFinalUsabilitySmoke:
+    """Final smoke checks for game-state usability."""
+
+    def test_smoke_updates_status_and_freeze_label_after_spell_turn(self):
+        game = SpellChessGame()
+
+        assert game.status_text() == "Turn: White."
+        assert game.cast_freeze(chess.E6) is True
+        assert game.make_move(chess.G1, chess.F3) is True
+        assert game.status_text() == "Turn: Black."
+        assert "frozen" in game.freeze_info_text().lower()
+
+    def test_smoke_has_legal_moves_and_nonempty_display_text(self):
+        game = SpellChessGame()
+
+        candidate_moves = game.get_legal_moves()
+
+        assert candidate_moves
+        assert isinstance(game.status_text(), str) and game.status_text()
+        assert isinstance(game.freeze_info_text(), str) and game.freeze_info_text()
+        assert isinstance(game.jump_info_text(), str) and game.jump_info_text()
+
+
+# S3T04
+class TestPreReleaseSuiteEvidence:
+    """Pre-release readiness checks should point to test modules and reports."""
+
+    def test_required_test_modules_exist_for_pre_release_suite(self):
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1]
+
+        assert (root / "test_spell_logic.py").exists()
+        assert (root / "Test_Experiments" / "testsS2.py").exists()
+        assert (root / "Test_Experiments" / "testsS3.py").exists()
+
+    def test_pre_release_test_report_exists_with_outcome(self):
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1]
+        report = root / "READMEs" / "S3_PRE_RELEASE_TEST_REPORT.md"
+
+        assert report.exists()
+        text = report.read_text(encoding="utf-8").lower()
+        assert "pytest" in text
+        assert "outcome" in text
+
+
+# S3T05
+class TestReleaseReadinessSummary:
+    """Release readiness evidence should include scope, risks, and validation."""
+
+    def test_release_readiness_summary_exists_with_required_sections(self):
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1]
+        summary = root / "READMEs" / "S3_RELEASE_READINESS_SUMMARY.md"
+
+        assert summary.exists()
+        text = summary.read_text(encoding="utf-8").lower()
+        assert "scope delivered" in text
+        assert "known issues" in text
+        assert "validation evidence" in text
+
