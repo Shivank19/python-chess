@@ -1,0 +1,1018 @@
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -m pytest final.py -v -p no:cacheprovider --junitxml=/Users/prashantrao/PythonWorkspace/5801/output/final_py_20260430_130555/pytest_report.xml
+
+STDOUT
+------
+============================= test session starts ==============================
+platform darwin -- Python 3.12.10, pytest-9.0.3, pluggy-1.6.0 -- /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+rootdir: /Users/prashantrao/PythonWorkspace/5801
+collecting ... collected 104 items
+
+final.py::TestFreezeTarget::test_freeze_affects_opponent_not_caster FAILED [  0%]
+final.py::TestNewGameResetsBoard::test_board_resets_after_moves FAILED   [  1%]
+final.py::TestFreezeOpponent::test_white_casts_freeze_opponent_is_black FAILED [  2%]
+final.py::TestFreezeOpponent::test_black_casts_freeze_opponent_is_white FAILED [  3%]
+final.py::TestFreezeSelf::test_freeze_effect_color_is_not_caster_white FAILED [  4%]
+final.py::TestFreezeSelf::test_freeze_effect_color_is_not_caster_black FAILED [  5%]
+final.py::TestFreezeSelf::test_freeze_on_self_does_not_affect_self FAILED [  6%]
+final.py::TestCenterSquareIncluded::test_center_included_for_every_square FAILED [  7%]
+final.py::TestCenterSquareIncluded::test_center_corner_a1 FAILED         [  8%]
+final.py::TestCenterSquareIncluded::test_center_corner_h1 FAILED         [  9%]
+final.py::TestCenterSquareIncluded::test_center_corner_a8 FAILED         [ 10%]
+final.py::TestCenterSquareIncluded::test_center_corner_h8 FAILED         [ 11%]
+final.py::TestCenterSquareIncluded::test_center_left_edge FAILED         [ 12%]
+final.py::TestCenterSquareIncluded::test_center_right_edge FAILED        [ 13%]
+final.py::TestCenterSquareIncluded::test_center_bottom_edge FAILED       [ 14%]
+final.py::TestCenterSquareIncluded::test_center_top_edge FAILED          [ 15%]
+final.py::TestSquareCount::test_midboard_e4 FAILED                       [ 16%]
+final.py::TestSquareCount::test_midboard_d5 FAILED                       [ 17%]
+final.py::TestSquareCount::test_left_edge_a4 FAILED                      [ 18%]
+final.py::TestSquareCount::test_right_edge_h5 FAILED                     [ 19%]
+final.py::TestSquareCount::test_bottom_edge_e1 FAILED                    [ 20%]
+final.py::TestSquareCount::test_top_edge_e8 FAILED                       [ 21%]
+final.py::TestSquareCount::test_corner_a1 FAILED                         [ 22%]
+final.py::TestSquareCount::test_corner_h1 FAILED                         [ 23%]
+final.py::TestSquareCount::test_corner_a8 FAILED                         [ 24%]
+final.py::TestSquareCount::test_corner_h8 FAILED                         [ 25%]
+final.py::TestExactMembership::test_a1_exact FAILED                      [ 25%]
+final.py::TestExactMembership::test_h1_exact FAILED                      [ 26%]
+final.py::TestExactMembership::test_a8_exact FAILED                      [ 27%]
+final.py::TestExactMembership::test_h8_exact FAILED                      [ 28%]
+final.py::TestExactMembership::test_a4_exact FAILED                      [ 29%]
+final.py::TestExactMembership::test_e1_exact FAILED                      [ 30%]
+final.py::TestExactMembership::test_e8_exact FAILED                      [ 31%]
+final.py::TestExactMembership::test_exact_match_all_64_squares FAILED    [ 32%]
+final.py::TestFreezeDuration::test_freeze_expires_after_frozen_player_completes_one_move FAILED [ 33%]
+final.py::TestFreezeCooldown::test_freeze_cooldown_counts_down_on_casters_turn_starts FAILED [ 34%]
+final.py::TestFreezeImplementationTurnOrder::test_normal_moves_alternate_turns_without_spell_side_effects PASSED [ 35%]
+final.py::TestFreezeImplementationTurnOrder::test_freeze_lifecycle_preserves_turn_order PASSED [ 36%]
+final.py::TestJumpValid::test_valid_jump_returns_true PASSED             [ 37%]
+final.py::TestJumpValid::test_valid_jump_moves_piece_to_destination PASSED [ 38%]
+final.py::TestJumpValid::test_valid_jump_clears_origin_square PASSED     [ 39%]
+final.py::TestJumpValid::test_jump_ignores_pieces_in_between PASSED      [ 40%]
+final.py::TestJumpOwnPiece::test_jump_rejects_empty_source_square PASSED [ 41%]
+final.py::TestJumpOwnPiece::test_jump_rejects_opponent_piece PASSED      [ 42%]
+final.py::TestJumpKingRestriction::test_jump_rejects_own_king FAILED     [ 43%]
+final.py::TestJumpEmptyDestination::test_jump_rejects_occupied_destination_own_piece FAILED [ 44%]
+final.py::TestJumpEmptyDestination::test_jump_rejects_occupied_destination_opponent_piece FAILED [ 45%]
+final.py::TestJumpRange::test_jump_spell_jump_to_same_square PASSED      [ 46%]
+final.py::TestJumpRange::test_jump_accepts_distance_1 PASSED             [ 47%]
+final.py::TestJumpRange::test_jump_accepts_distance_2 PASSED             [ 48%]
+final.py::TestJumpRange::test_jump_rejects_distance_3 FAILED             [ 49%]
+final.py::TestJumpRange::test_jump_rejects_distance_beyond_board PASSED  [ 50%]
+final.py::TestFreezeCharges::test_freeze_charges_start_at_five_for_both_sides PASSED [ 50%]
+final.py::TestFreezeCharges::test_freeze_charge_decrements_after_successful_cast FAILED [ 51%]
+final.py::TestFreezeCharges::test_freeze_charge_decrements_for_black_after_successful_cast FAILED [ 52%]
+final.py::TestFreezeCharges::test_freeze_blocked_when_charges_are_zero PASSED [ 53%]
+final.py::TestFreezeCharges::test_freeze_charge_cannot_go_below_zero FAILED [ 54%]
+final.py::TestFreezePerTurnLimit::test_freeze_cannot_be_cast_twice_in_same_turn PASSED [ 55%]
+final.py::TestFreezePerTurnLimit::test_freeze_cast_limit_resets_next_turn PASSED [ 56%]
+final.py::TestFreezePerTurnLimit::test_freeze_charge_does_not_decrement_on_failed_cast PASSED [ 57%]
+final.py::TestJumpCharges::test_jump_charges_start_at_three_for_both_sides PASSED [ 58%]
+final.py::TestJumpCharges::test_jump_charge_decrements_after_successful_cast PASSED [ 59%]
+final.py::TestJumpCharges::test_jump_charge_decrements_for_black_after_successful_cast PASSED [ 60%]
+final.py::TestJumpCharges::test_jump_blocked_when_charges_are_zero PASSED [ 61%]
+final.py::TestJumpCharges::test_jump_charge_cannot_go_below_zero PASSED  [ 62%]
+final.py::TestJumpPerTurnLimit::test_jump_cannot_be_cast_twice_in_same_turn PASSED [ 63%]
+final.py::TestJumpPerTurnLimit::test_jump_cast_limit_resets_next_turn PASSED [ 64%]
+final.py::TestJumpPerTurnLimit::test_jump_charge_does_not_decrement_on_failed_cast PASSED [ 65%]
+final.py::TestSpellsAreIndependent::test_casting_freeze_does_not_block_jump_in_same_turn PASSED [ 66%]
+final.py::TestSpellsAreIndependent::test_casting_jump_does_not_block_freeze_in_same_turn PASSED [ 67%]
+final.py::TestSpellsAreIndependent::test_freeze_charges_unaffected_by_jump_cast PASSED [ 68%]
+final.py::TestSpellsAreIndependent::test_jump_charges_unaffected_by_freeze_cast PASSED [ 69%]
+final.py::TestJumpChargesAndCooldown::test_jump_charges_start_at_three PASSED [ 70%]
+final.py::TestJumpChargesAndCooldown::test_jump_charge_decrements_on_success PASSED [ 71%]
+final.py::TestJumpChargesAndCooldown::test_jump_cooldown_set_after_cast PASSED [ 72%]
+final.py::TestJumpChargesAndCooldown::test_jump_rejected_when_no_charges_remain PASSED [ 73%]
+final.py::TestJumpChargesAndCooldown::test_jump_rejected_while_on_cooldown PASSED [ 74%]
+final.py::TestJumpChargesAndCooldown::test_jump_cooldown_counts_down_on_casters_turn_starts FAILED [ 75%]
+final.py::TestJumpChargesAndCooldown::test_double_jump_in_second_turn FAILED [ 75%]
+final.py::TestGameResets::test_new_game_resets_board FAILED              [ 76%]
+final.py::TestGameResets::test_new_game_resets_freeze_effect_color PASSED [ 77%]
+final.py::TestGameResets::test_new_game_resets_freeze_effect_squares PASSED [ 78%]
+final.py::TestGameResets::test_new_game_resets_freeze_effect_plies_left PASSED [ 79%]
+final.py::TestGameResets::test_new_game_resets_freeze_cooldown_white PASSED [ 80%]
+final.py::TestGameResets::test_new_game_resets_freeze_cooldown_black PASSED [ 81%]
+final.py::TestGameResets::test_new_game_resets_freeze_remaining_white PASSED [ 82%]
+final.py::TestGameResets::test_new_game_resets_freeze_remaining_black PASSED [ 83%]
+final.py::TestGameResets::test_new_game_resets_spell_casted_this_turn PASSED [ 84%]
+final.py::TestGameResets::test_new_game_resets_get_legal_moves FAILED    [ 85%]
+final.py::TestGameResets::test_new_game_resets_jumps_remaining FAILED    [ 86%]
+final.py::TestGameResets::test_new_game_resets_jump_cooldown PASSED      [ 87%]
+final.py::TestGameResets::test_new_game_resets_jump_casted_this_turn PASSED [ 88%]
+final.py::TestFrozenOriginMoveRestriction::test_make_move_rejects_move_from_frozen_origin FAILED [ 89%]
+final.py::TestFrozenOriginMoveRestriction::test_get_legal_moves_excludes_moves_from_frozen_origin PASSED [ 90%]
+final.py::TestFrozenOriginUiFeedback::test_current_player_can_be_identified_as_frozen_for_ui_blocking PASSED [ 91%]
+final.py::TestFrozenOriginUiFeedback::test_freeze_info_text_mentions_frozen_pieces_for_current_player PASSED [ 92%]
+final.py::TestGameStateDisplayTraceability::test_status_text_shows_current_player_turn PASSED [ 93%]
+final.py::TestGameStateDisplayTraceability::test_status_text_marks_check PASSED [ 94%]
+final.py::TestGameStateDisplayTraceability::test_freeze_info_text_shows_current_player_charges_and_cooldown FAILED [ 95%]
+final.py::TestGameStateDisplayTraceability::test_jump_info_text_shows_current_player_charges_and_cooldown FAILED [ 96%]
+final.py::TestCloseDisplayGaps::test_freeze_info_text_mentions_when_current_player_is_frozen PASSED [ 97%]
+final.py::TestCloseDisplayGaps::test_game_over_status_text_reports_checkmate_winner PASSED [ 98%]
+final.py::TestFrozenAreaCaptureAndCheck::test_white_can_capture_black_piece_inside_frozen_area PASSED [ 99%]
+final.py::TestFrozenAreaCaptureAndCheck::test_white_can_give_check_when_black_king_is_in_frozen_area PASSED [100%]
+
+=================================== FAILURES ===================================
+___________ TestFreezeTarget.test_freeze_affects_opponent_not_caster ___________
+
+self = <final.TestFreezeTarget object at 0x102e77920>
+
+    def test_freeze_affects_opponent_not_caster(self):
+        game = SpellChessGame()
+        # White casts freeze
+        game.cast_freeze(chess.E5)
+        # The frozen color should be Black (the opponent), not White
+>       assert game.freeze_effect_color == chess.BLACK
+E       assert True == False
+E        +  where True = <spell_logic.SpellChessGame object at 0x1024ba660>.freeze_effect_color
+E        +  and   False = chess.BLACK
+
+final.py:31: AssertionError
+_____________ TestNewGameResetsBoard.test_board_resets_after_moves _____________
+
+self = <final.TestNewGameResetsBoard object at 0x102e77d40>
+
+    def test_board_resets_after_moves(self):
+        game = SpellChessGame()
+        game.board.push_san("e4")
+        game.new_game()
+>       assert game.board.fen() == chess.STARTING_FEN
+E       AssertionError: assert 'rnbqkbnr/ppp... b KQkq - 0 1' == 'rnbqkbnr/ppp... w KQkq - 0 1'
+E         
+E         - rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+E         ?                       ^       ^             ^
+E         + rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+E         ?                       ^^^       ^             ^
+
+final.py:41: AssertionError
+_________ TestFreezeOpponent.test_white_casts_freeze_opponent_is_black _________
+
+self = <final.TestFreezeOpponent object at 0x102e28050>
+
+    def test_white_casts_freeze_opponent_is_black(self):
+        """When White casts Freeze the frozen color must be BLACK."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE
+        result = game.cast_freeze(chess.E5)
+        assert game.current_turn() == chess.WHITE
+        assert result is True
+>       assert game.freeze_effect_color == chess.BLACK
+E       assert True == False
+E        +  where True = <spell_logic.SpellChessGame object at 0x1025dad80>.freeze_effect_color
+E        +  and   False = chess.BLACK
+
+final.py:58: AssertionError
+_________ TestFreezeOpponent.test_black_casts_freeze_opponent_is_white _________
+
+self = <final.TestFreezeOpponent object at 0x102e28290>
+
+    def test_black_casts_freeze_opponent_is_white(self):
+        """When Black casts Freeze the frozen color must be WHITE."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE
+        game.make_move(chess.E2, chess.E4)
+        assert game.current_turn() == chess.BLACK
+        result = game.cast_freeze(chess.E4)
+        assert game.current_turn() == chess.BLACK
+        assert result is True
+>       assert game.freeze_effect_color == chess.WHITE
+E       assert False == True
+E        +  where False = <spell_logic.SpellChessGame object at 0x1025da5d0>.freeze_effect_color
+E        +  and   True = chess.WHITE
+
+final.py:69: AssertionError
+_________ TestFreezeSelf.test_freeze_effect_color_is_not_caster_white __________
+
+self = <final.TestFreezeSelf object at 0x102e28500>
+
+    def test_freeze_effect_color_is_not_caster_white(self):
+        """After White casts, the frozen color must NOT equal WHITE (the caster)."""
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE
+        game.cast_freeze(chess.D4)
+>       assert game.freeze_effect_color != chess.WHITE
+E       assert True != True
+E        +  where True = <spell_logic.SpellChessGame object at 0x1025b8500>.freeze_effect_color
+E        +  and   True = chess.WHITE
+
+final.py:78: AssertionError
+_________ TestFreezeSelf.test_freeze_effect_color_is_not_caster_black __________
+
+self = <final.TestFreezeSelf object at 0x102e28770>
+
+    def test_freeze_effect_color_is_not_caster_black(self):
+        """After Black casts, the frozen color must NOT equal BLACK (the caster)."""
+        game = SpellChessGame()
+        game.make_move(chess.D2, chess.D4)
+        assert game.current_turn() == chess.BLACK
+        game.cast_freeze(chess.D5)
+>       assert game.freeze_effect_color != chess.BLACK
+E       assert False != False
+E        +  where False = <spell_logic.SpellChessGame object at 0x1025da540>.freeze_effect_color
+E        +  and   False = chess.BLACK
+
+final.py:86: AssertionError
+___________ TestFreezeSelf.test_freeze_on_self_does_not_affect_self ____________
+
+self = <final.TestFreezeSelf object at 0x102e289e0>
+
+    def test_freeze_on_self_does_not_affect_self(self):
+        game = SpellChessGame()
+        assert game.current_turn() == chess.WHITE
+        options_before_cast = game.get_legal_moves()
+        result = game.cast_freeze(chess.E2)
+        assert result is True
+        options_after_cast = game.get_legal_moves()
+>       assert options_before_cast == options_after_cast
+E       AssertionError: assert [Move.from_uc...('g2g3'), ...] == [Move.from_uc...('g2g3'), ...]
+E         
+E         At index 6 diff: Move.from_uci('f2f3') != Move.from_uci('e2e3')
+E         Left contains 4 more items, first extra item: Move.from_uci('d2d4')
+E         
+E         Full diff:
+E           [
+E               Move.from_uci('g1h3'),...
+E         
+E         ...Full output truncated (20 lines hidden), use '-vv' to show
+
+final.py:95: AssertionError
+________ TestCenterSquareIncluded.test_center_included_for_every_square ________
+
+self = <final.TestCenterSquareIncluded object at 0x102e28cb0>
+
+    def test_center_included_for_every_square(self):
+        failures = [
+            chess.square_name(sq)
+            for sq in chess.SQUARES
+            if sq not in squares_in_3x3(sq)
+        ]
+>       assert failures == [], f"Center missing for: {failures}"
+E       AssertionError: Center missing for: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1', 'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2', 'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3', 'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4', 'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5', 'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6', 'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7', 'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
+E       assert ['a1', 'b1', ...1', 'f1', ...] == []
+E         
+E         Left contains 64 more items, first extra item: 'a1'
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     'a1',...
+E         
+E         ...Full output truncated (64 lines hidden), use '-vv' to show
+
+final.py:108: AssertionError
+________________ TestCenterSquareIncluded.test_center_corner_a1 ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e28f20>
+
+    def test_center_corner_a1(self):
+>       assert chess.A1 in squares_in_3x3(chess.A1)
+E       assert 0 in {1, 8, 9}
+E        +  where 0 = chess.A1
+E        +  and   {1, 8, 9} = squares_in_3x3(0)
+E        +    where 0 = chess.A1
+
+final.py:111: AssertionError
+________________ TestCenterSquareIncluded.test_center_corner_h1 ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e29190>
+
+    def test_center_corner_h1(self):
+>       assert chess.H1 in squares_in_3x3(chess.H1)
+E       assert 7 in {6, 14, 15}
+E        +  where 7 = chess.H1
+E        +  and   {6, 14, 15} = squares_in_3x3(7)
+E        +    where 7 = chess.H1
+
+final.py:114: AssertionError
+________________ TestCenterSquareIncluded.test_center_corner_a8 ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e29400>
+
+    def test_center_corner_a8(self):
+>       assert chess.A8 in squares_in_3x3(chess.A8)
+E       assert 56 in {48, 49, 57}
+E        +  where 56 = chess.A8
+E        +  and   {48, 49, 57} = squares_in_3x3(56)
+E        +    where 56 = chess.A8
+
+final.py:117: AssertionError
+________________ TestCenterSquareIncluded.test_center_corner_h8 ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e77c50>
+
+    def test_center_corner_h8(self):
+>       assert chess.H8 in squares_in_3x3(chess.H8)
+E       assert 63 in {54, 55, 62}
+E        +  where 63 = chess.H8
+E        +  and   {54, 55, 62} = squares_in_3x3(63)
+E        +    where 63 = chess.H8
+
+final.py:120: AssertionError
+________________ TestCenterSquareIncluded.test_center_left_edge ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e77aa0>
+
+    def test_center_left_edge(self):
+>       assert chess.A4 in squares_in_3x3(chess.A4)
+E       assert 24 in {16, 17, 25, 32, 33}
+E        +  where 24 = chess.A4
+E        +  and   {16, 17, 25, 32, 33} = squares_in_3x3(24)
+E        +    where 24 = chess.A4
+
+final.py:123: AssertionError
+_______________ TestCenterSquareIncluded.test_center_right_edge ________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e290a0>
+
+    def test_center_right_edge(self):
+>       assert chess.H5 in squares_in_3x3(chess.H5)
+E       assert 39 in {30, 31, 38, 46, 47}
+E        +  where 39 = chess.H5
+E        +  and   {30, 31, 38, 46, 47} = squares_in_3x3(39)
+E        +    where 39 = chess.H5
+
+final.py:126: AssertionError
+_______________ TestCenterSquareIncluded.test_center_bottom_edge _______________
+
+self = <final.TestCenterSquareIncluded object at 0x102e28ef0>
+
+    def test_center_bottom_edge(self):
+>       assert chess.E1 in squares_in_3x3(chess.E1)
+E       assert 4 in {3, 5, 11, 12, 13}
+E        +  where 4 = chess.E1
+E        +  and   {3, 5, 11, 12, 13} = squares_in_3x3(4)
+E        +    where 4 = chess.E1
+
+final.py:129: AssertionError
+________________ TestCenterSquareIncluded.test_center_top_edge _________________
+
+self = <final.TestCenterSquareIncluded object at 0x102e288c0>
+
+    def test_center_top_edge(self):
+>       assert chess.E8 in squares_in_3x3(chess.E8)
+E       assert 60 in {51, 52, 53, 59, 61}
+E        +  where 60 = chess.E8
+E        +  and   {51, 52, 53, 59, 61} = squares_in_3x3(60)
+E        +    where 60 = chess.E8
+
+final.py:132: AssertionError
+_______________________ TestSquareCount.test_midboard_e4 _______________________
+
+self = <final.TestSquareCount object at 0x102e28470>
+
+    def test_midboard_e4(self):
+>       assert len(squares_in_3x3(chess.E4)) == 9
+E       assert 8 == 9
+E        +  where 8 = len({19, 20, 21, 27, 29, 35, ...})
+E        +    where {19, 20, 21, 27, 29, 35, ...} = squares_in_3x3(28)
+E        +      where 28 = chess.E4
+
+final.py:139: AssertionError
+_______________________ TestSquareCount.test_midboard_d5 _______________________
+
+self = <final.TestSquareCount object at 0x102e294f0>
+
+    def test_midboard_d5(self):
+>       assert len(squares_in_3x3(chess.D5)) == 9
+E       assert 8 == 9
+E        +  where 8 = len({26, 27, 28, 34, 36, 42, ...})
+E        +    where {26, 27, 28, 34, 36, 42, ...} = squares_in_3x3(35)
+E        +      where 35 = chess.D5
+
+final.py:142: AssertionError
+______________________ TestSquareCount.test_left_edge_a4 _______________________
+
+self = <final.TestSquareCount object at 0x102e297c0>
+
+    def test_left_edge_a4(self):
+>       assert len(squares_in_3x3(chess.A4)) == 6
+E       assert 5 == 6
+E        +  where 5 = len({16, 17, 25, 32, 33})
+E        +    where {16, 17, 25, 32, 33} = squares_in_3x3(24)
+E        +      where 24 = chess.A4
+
+final.py:145: AssertionError
+______________________ TestSquareCount.test_right_edge_h5 ______________________
+
+self = <final.TestSquareCount object at 0x102e29a90>
+
+    def test_right_edge_h5(self):
+>       assert len(squares_in_3x3(chess.H5)) == 6
+E       assert 5 == 6
+E        +  where 5 = len({30, 31, 38, 46, 47})
+E        +    where {30, 31, 38, 46, 47} = squares_in_3x3(39)
+E        +      where 39 = chess.H5
+
+final.py:148: AssertionError
+_____________________ TestSquareCount.test_bottom_edge_e1 ______________________
+
+self = <final.TestSquareCount object at 0x102e29d60>
+
+    def test_bottom_edge_e1(self):
+>       assert len(squares_in_3x3(chess.E1)) == 6
+E       assert 5 == 6
+E        +  where 5 = len({3, 5, 11, 12, 13})
+E        +    where {3, 5, 11, 12, 13} = squares_in_3x3(4)
+E        +      where 4 = chess.E1
+
+final.py:151: AssertionError
+_______________________ TestSquareCount.test_top_edge_e8 _______________________
+
+self = <final.TestSquareCount object at 0x102e2a030>
+
+    def test_top_edge_e8(self):
+>       assert len(squares_in_3x3(chess.E8)) == 6
+E       assert 5 == 6
+E        +  where 5 = len({51, 52, 53, 59, 61})
+E        +    where {51, 52, 53, 59, 61} = squares_in_3x3(60)
+E        +      where 60 = chess.E8
+
+final.py:154: AssertionError
+________________________ TestSquareCount.test_corner_a1 ________________________
+
+self = <final.TestSquareCount object at 0x102e2a300>
+
+    def test_corner_a1(self):
+>       assert len(squares_in_3x3(chess.A1)) == 4
+E       assert 3 == 4
+E        +  where 3 = len({1, 8, 9})
+E        +    where {1, 8, 9} = squares_in_3x3(0)
+E        +      where 0 = chess.A1
+
+final.py:157: AssertionError
+________________________ TestSquareCount.test_corner_h1 ________________________
+
+self = <final.TestSquareCount object at 0x102e2a5d0>
+
+    def test_corner_h1(self):
+>       assert len(squares_in_3x3(chess.H1)) == 4
+E       assert 3 == 4
+E        +  where 3 = len({6, 14, 15})
+E        +    where {6, 14, 15} = squares_in_3x3(7)
+E        +      where 7 = chess.H1
+
+final.py:160: AssertionError
+________________________ TestSquareCount.test_corner_a8 ________________________
+
+self = <final.TestSquareCount object at 0x102e2a8a0>
+
+    def test_corner_a8(self):
+>       assert len(squares_in_3x3(chess.A8)) == 4
+E       assert 3 == 4
+E        +  where 3 = len({48, 49, 57})
+E        +    where {48, 49, 57} = squares_in_3x3(56)
+E        +      where 56 = chess.A8
+
+final.py:163: AssertionError
+________________________ TestSquareCount.test_corner_h8 ________________________
+
+self = <final.TestSquareCount object at 0x102e2ab70>
+
+    def test_corner_h8(self):
+>       assert len(squares_in_3x3(chess.H8)) == 4
+E       assert 3 == 4
+E        +  where 3 = len({54, 55, 62})
+E        +    where {54, 55, 62} = squares_in_3x3(63)
+E        +      where 63 = chess.H8
+
+final.py:166: AssertionError
+______________________ TestExactMembership.test_a1_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e2ae70>
+
+    def test_a1_exact(self):
+>       assert squares_in_3x3(chess.A1) == {chess.A1, chess.B1, chess.A2, chess.B2}
+E       AssertionError: assert {1, 8, 9} == {0, 1, 8, 9}
+E         
+E         Extra items in the right set:
+E         0
+E         
+E         Full diff:
+E           {
+E         -     0,...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+final.py:173: AssertionError
+______________________ TestExactMembership.test_h1_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e2b140>
+
+    def test_h1_exact(self):
+>       assert squares_in_3x3(chess.H1) == {chess.G1, chess.H1, chess.G2, chess.H2}
+E       AssertionError: assert {6, 14, 15} == {6, 7, 14, 15}
+E         
+E         Extra items in the right set:
+E         7
+E         
+E         Full diff:
+E           {
+E               6,...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+final.py:176: AssertionError
+______________________ TestExactMembership.test_a8_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e77a70>
+
+    def test_a8_exact(self):
+>       assert squares_in_3x3(chess.A8) == {chess.A7, chess.B7, chess.A8, chess.B8}
+E       AssertionError: assert {48, 49, 57} == {48, 49, 56, 57}
+E         
+E         Extra items in the right set:
+E         56
+E         
+E         Full diff:
+E           {
+E               48,...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+final.py:179: AssertionError
+______________________ TestExactMembership.test_h8_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e28860>
+
+    def test_h8_exact(self):
+>       assert squares_in_3x3(chess.H8) == {chess.G7, chess.H7, chess.G8, chess.H8}
+E       AssertionError: assert {54, 55, 62} == {54, 55, 62, 63}
+E         
+E         Extra items in the right set:
+E         63
+E         
+E         Full diff:
+E           {
+E               54,...
+E         
+E         ...Full output truncated (4 lines hidden), use '-vv' to show
+
+final.py:182: AssertionError
+______________________ TestExactMembership.test_a4_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e2aff0>
+
+    def test_a4_exact(self):
+>       assert squares_in_3x3(chess.A4) == {
+            chess.A3, chess.B3, chess.A4, chess.B4, chess.A5, chess.B5
+        }
+E       AssertionError: assert {16, 17, 25, 32, 33} == {16, 17, 24, 25, 32, 33}
+E         
+E         Extra items in the right set:
+E         24
+E         
+E         Full diff:
+E           {
+E               16,...
+E         
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+final.py:185: AssertionError
+______________________ TestExactMembership.test_e1_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e2ac90>
+
+    def test_e1_exact(self):
+>       assert squares_in_3x3(chess.E1) == {
+            chess.D1, chess.E1, chess.F1, chess.D2, chess.E2, chess.F2
+        }
+E       AssertionError: assert {3, 5, 11, 12, 13} == {3, 4, 5, 11, 12, 13}
+E         
+E         Extra items in the right set:
+E         4
+E         
+E         Full diff:
+E           {
+E               3,...
+E         
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+final.py:190: AssertionError
+______________________ TestExactMembership.test_e8_exact _______________________
+
+self = <final.TestExactMembership object at 0x102e2a750>
+
+    def test_e8_exact(self):
+>       assert squares_in_3x3(chess.E8) == {
+            chess.D7, chess.E7, chess.F7, chess.D8, chess.E8, chess.F8
+        }
+E       AssertionError: assert {51, 52, 53, 59, 61} == {51, 52, 53, 59, 60, 61}
+E         
+E         Extra items in the right set:
+E         60
+E         
+E         Full diff:
+E           {
+E               51,...
+E         
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+final.py:195: AssertionError
+_____________ TestExactMembership.test_exact_match_all_64_squares ______________
+
+self = <final.TestExactMembership object at 0x102e2a3f0>
+
+    def test_exact_match_all_64_squares(self):
+        def expected(sq):
+            cf, cr = chess.square_file(sq), chess.square_rank(sq)
+            return {
+                chess.square(cf + df, cr + dr)
+                for df in (-1, 0, 1) for dr in (-1, 0, 1)
+                if 0 <= cf + df < 8 and 0 <= cr + dr < 8
+            }
+        failures = []
+        for sq in chess.SQUARES:
+            got, want = squares_in_3x3(sq), expected(sq)
+            if got != want:
+                failures.append(
+                    f"{chess.square_name(sq)}: missing={[chess.square_name(s) for s in want - got]}"
+                )
+>       assert failures == [], "Mismatches:\n" + "\n".join(failures)
+E       AssertionError: Mismatches:
+E         a1: missing=['a1']
+E         b1: missing=['b1']
+E         c1: missing=['c1']
+E         d1: missing=['d1']
+E         e1: missing=['e1']
+E         f1: missing=['f1']
+E         g1: missing=['g1']
+E         h1: missing=['h1']
+E         a2: missing=['a2']
+E         b2: missing=['b2']
+E         c2: missing=['c2']
+E         d2: missing=['d2']
+E         e2: missing=['e2']
+E         f2: missing=['f2']
+E         g2: missing=['g2']
+E         h2: missing=['h2']
+E         a3: missing=['a3']
+E         b3: missing=['b3']
+E         c3: missing=['c3']
+E         d3: missing=['d3']
+E         e3: missing=['e3']
+E         f3: missing=['f3']
+E         g3: missing=['g3']
+E         h3: missing=['h3']
+E         a4: missing=['a4']
+E         b4: missing=['b4']
+E         c4: missing=['c4']
+E         d4: missing=['d4']
+E         e4: missing=['e4']
+E         f4: missing=['f4']
+E         g4: missing=['g4']
+E         h4: missing=['h4']
+E         a5: missing=['a5']
+E         b5: missing=['b5']
+E         c5: missing=['c5']
+E         d5: missing=['d5']
+E         e5: missing=['e5']
+E         f5: missing=['f5']
+E         g5: missing=['g5']
+E         h5: missing=['h5']
+E         a6: missing=['a6']
+E         b6: missing=['b6']
+E         c6: missing=['c6']
+E         d6: missing=['d6']
+E         e6: missing=['e6']
+E         f6: missing=['f6']
+E         g6: missing=['g6']
+E         h6: missing=['h6']
+E         a7: missing=['a7']
+E         b7: missing=['b7']
+E         c7: missing=['c7']
+E         d7: missing=['d7']
+E         e7: missing=['e7']
+E         f7: missing=['f7']
+E         g7: missing=['g7']
+E         h7: missing=['h7']
+E         a8: missing=['a8']
+E         b8: missing=['b8']
+E         c8: missing=['c8']
+E         d8: missing=['d8']
+E         e8: missing=['e8']
+E         f8: missing=['f8']
+E         g8: missing=['g8']
+E         h8: missing=['h8']
+E       assert ["a1: missing...=['f1']", ...] == []
+E         
+E         Left contains 64 more items, first extra item: "a1: missing=['a1']"
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     "a1: missing=['a1']",...
+E         
+E         ...Full output truncated (64 lines hidden), use '-vv' to show
+
+final.py:214: AssertionError
+_ TestFreezeDuration.test_freeze_expires_after_frozen_player_completes_one_move _
+
+self = <final.TestFreezeDuration object at 0x102e29fd0>
+
+    def test_freeze_expires_after_frozen_player_completes_one_move(self):
+        game = SpellChessGame()
+    
+        assert game.cast_freeze(chess.E6) is True
+>       assert game.freeze_effect_plies_left == 1
+E       assert 2 == 1
+E        +  where 2 = <spell_logic.SpellChessGame object at 0x1025e7590>.freeze_effect_plies_left
+
+final.py:224: AssertionError
+__ TestFreezeCooldown.test_freeze_cooldown_counts_down_on_casters_turn_starts __
+
+self = <final.TestFreezeCooldown object at 0x102e298e0>
+
+    def test_freeze_cooldown_counts_down_on_casters_turn_starts(self):
+        game = SpellChessGame()
+    
+        assert game.cast_freeze(chess.H8) is True
+>       assert game.freeze_cooldown[chess.WHITE] == 3
+E       assert 2 == 3
+
+final.py:245: AssertionError
+______________ TestJumpKingRestriction.test_jump_rejects_own_king ______________
+
+self = <final.TestJumpKingRestriction object at 0x1025d8320>
+
+    def test_jump_rejects_own_king(self):
+        """cast_jump must return False when the selected piece is the King."""
+        game = SpellChessGame()
+        # White king starts on e1.
+>       assert game.cast_jump(chess.E1, chess.E3) is False
+E       assert True is False
+E        +  where True = cast_jump(4, 20)
+E        +    where cast_jump = <spell_logic.SpellChessGame object at 0x1025e7680>.cast_jump
+E        +    and   4 = chess.E1
+E        +    and   20 = chess.E3
+
+final.py:349: AssertionError
+__ TestJumpEmptyDestination.test_jump_rejects_occupied_destination_own_piece ___
+
+self = <final.TestJumpEmptyDestination object at 0x102e2bbc0>
+
+    def test_jump_rejects_occupied_destination_own_piece(self):
+        """cast_jump must return False when the destination holds a friendly piece."""
+        game = SpellChessGame()
+        # White knight g1 → g2 (White pawn is on g2).
+>       assert game.cast_jump(chess.G1, chess.G2) is False
+E       assert True is False
+E        +  where True = cast_jump(6, 14)
+E        +    where cast_jump = <spell_logic.SpellChessGame object at 0x1025f4080>.cast_jump
+E        +    and   6 = chess.G1
+E        +    and   14 = chess.G2
+
+final.py:359: AssertionError
+_ TestJumpEmptyDestination.test_jump_rejects_occupied_destination_opponent_piece _
+
+self = <final.TestJumpEmptyDestination object at 0x102e2b6e0>
+
+    def test_jump_rejects_occupied_destination_opponent_piece(self):
+        """cast_jump must return False when the destination holds an opponent piece."""
+        game = SpellChessGame()
+        game.make_move(chess.E2, chess.E4)
+        game.make_move(chess.E7, chess.E5)
+>       assert game.cast_jump(chess.E4, chess.E5) is False
+E       assert True is False
+E        +  where True = cast_jump(28, 36)
+E        +    where cast_jump = <spell_logic.SpellChessGame object at 0x1025f4920>.cast_jump
+E        +    and   28 = chess.E4
+E        +    and   36 = chess.E5
+
+final.py:366: AssertionError
+__________________ TestJumpRange.test_jump_rejects_distance_3 __________________
+
+self = <final.TestJumpRange object at 0x102e29c10>
+
+    def test_jump_rejects_distance_3(self):
+        """A jump of Chebyshev distance 3 exceeds the rule limit and must be rejected."""
+        game = SpellChessGame()
+        # Place a White Pawn on e2; e5 is distance 3.
+>       assert game.cast_jump(chess.E2, chess.E5) is False
+E       assert True is False
+E        +  where True = cast_jump(12, 36)
+E        +    where cast_jump = <spell_logic.SpellChessGame object at 0x1025f5640>.cast_jump
+E        +    and   12 = chess.E2
+E        +    and   36 = chess.E5
+
+final.py:393: AssertionError
+____ TestFreezeCharges.test_freeze_charge_decrements_after_successful_cast _____
+
+self = <final.TestFreezeCharges object at 0x102e2b170>
+
+    def test_freeze_charge_decrements_after_successful_cast(self):
+        """White's Freeze charge must drop from 5 to 4 after one cast."""
+        game = SpellChessGame()
+        assert game.cast_freeze(chess.E5) is True
+>       assert game.freeze_remaining[chess.WHITE] == 4
+E       assert 5 == 4
+
+final.py:417: AssertionError
+_ TestFreezeCharges.test_freeze_charge_decrements_for_black_after_successful_cast _
+
+self = <final.TestFreezeCharges object at 0x102e77f80>
+
+    def test_freeze_charge_decrements_for_black_after_successful_cast(self):
+        """Black's Freeze charge must drop from 5 to 4 after one cast."""
+        game = SpellChessGame()
+        game.make_move(chess.E2, chess.E4)          # White moves → Black's turn
+        assert game.cast_freeze(chess.E4) is True
+>       assert game.freeze_remaining[chess.BLACK] == 4
+E       assert 5 == 4
+
+final.py:424: AssertionError
+__________ TestFreezeCharges.test_freeze_charge_cannot_go_below_zero ___________
+
+self = <final.TestFreezeCharges object at 0x1025d8740>
+
+    def test_freeze_charge_cannot_go_below_zero(self):
+        """After all 5 Freeze charges are used, the charge counter must be 0, not negative."""
+        game = SpellChessGame()
+        game.freeze_remaining[chess.WHITE] = 1
+        game.cast_freeze(chess.E5)
+>       assert game.freeze_remaining[chess.WHITE] == 0
+E       assert 1 == 0
+
+final.py:437: AssertionError
+_ TestJumpChargesAndCooldown.test_jump_cooldown_counts_down_on_casters_turn_starts _
+
+self = <final.TestJumpChargesAndCooldown object at 0x1025da360>
+
+    def test_jump_cooldown_counts_down_on_casters_turn_starts(self):
+        game = SpellChessGame()
+    
+        assert game.cast_jump(chess.H1, chess.H3) is True
+>       assert game.jump_cooldown[chess.WHITE] == 2
+E       assert 1 == 2
+
+final.py:600: AssertionError
+__________ TestJumpChargesAndCooldown.test_double_jump_in_second_turn __________
+
+self = <final.TestJumpChargesAndCooldown object at 0x1025da630>
+
+    def test_double_jump_in_second_turn(self):
+        game = SpellChessGame()
+        game.cast_jump(chess.G1, chess.E3)
+        game.make_move(chess.E3, chess.F5)         # White moves the jumped piece
+        assert game.current_turn() == chess.BLACK
+        game.make_move(chess.E7, chess.E5)         # Black moves
+        assert game.current_turn() == chess.WHITE
+>       assert game.cast_jump(chess.B1, chess.C3) is False
+E       assert True is False
+E        +  where True = cast_jump(1, 18)
+E        +    where cast_jump = <spell_logic.SpellChessGame object at 0x1025d8560>.cast_jump
+E        +    and   1 = chess.B1
+E        +    and   18 = chess.C3
+
+final.py:628: AssertionError
+__________________ TestGameResets.test_new_game_resets_board ___________________
+
+self = <final.TestGameResets object at 0x1025da960>
+
+    def test_new_game_resets_board(self):
+        """Calling new_game() should reset the board to the starting position."""
+        game = SpellChessGame()
+        game.board.push_san("e4")
+        game.new_game()
+>       assert game.board.fen() == chess.STARTING_FEN
+E       AssertionError: assert 'rnbqkbnr/ppp... b KQkq - 0 1' == 'rnbqkbnr/ppp... w KQkq - 0 1'
+E         
+E         - rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+E         ?                       ^       ^             ^
+E         + rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+E         ?                       ^^^       ^             ^
+
+final.py:639: AssertionError
+_____________ TestGameResets.test_new_game_resets_get_legal_moves ______________
+
+self = <final.TestGameResets object at 0x1025d9b20>
+
+    def test_new_game_resets_get_legal_moves(self):
+        """Calling new_game() should reset the board to the starting position, which has a specific set of legal moves."""
+        game = SpellChessGame()
+    
+        game.cast_freeze(chess.F6)
+>       assert game.is_frozen(chess.F6, chess.BLACK)
+E       assert False
+E        +  where False = is_frozen(45, False)
+E        +    where is_frozen = <spell_logic.SpellChessGame object at 0x1025f6d20>.is_frozen
+E        +    and   45 = chess.F6
+E        +    and   False = chess.BLACK
+
+final.py:715: AssertionError
+_____________ TestGameResets.test_new_game_resets_jumps_remaining ______________
+
+self = <final.TestGameResets object at 0x1025d8650>
+
+    def test_new_game_resets_jumps_remaining(self):
+        """Calling new_game() should reset the jumps_remaining for both players."""
+        game = SpellChessGame()
+        game.cast_jump(chess.E2, chess.E4)
+        game.new_game()
+>       assert game.jump_remaining[chess.WHITE] == 3
+E       assert 2 == 3
+
+final.py:728: AssertionError
+_ TestFrozenOriginMoveRestriction.test_make_move_rejects_move_from_frozen_origin _
+
+self = <final.TestFrozenOriginMoveRestriction object at 0x1025dad50>
+
+    def test_make_move_rejects_move_from_frozen_origin(self):
+        game = game_with_black_e_pawn_frozen()
+    
+        assert game.is_frozen(chess.E7, chess.BLACK) is True
+>       assert game.make_move(chess.E7, chess.E5) is False
+E       assert True is False
+E        +  where True = make_move(52, 36)
+E        +    where make_move = <spell_logic.SpellChessGame object at 0x10253c2c0>.make_move
+E        +    and   52 = chess.E7
+E        +    and   36 = chess.E5
+
+final.py:761: AssertionError
+_ TestGameStateDisplayTraceability.test_freeze_info_text_shows_current_player_charges_and_cooldown _
+
+self = <final.TestGameStateDisplayTraceability object at 0x1025dbec0>
+
+    def test_freeze_info_text_shows_current_player_charges_and_cooldown(self):
+        game = SpellChessGame()
+        game.cast_freeze(chess.E5)  # This will set White's charges to 4 and cooldown to 3
+    
+        text = game.freeze_info_text()
+    
+>       assert "Freeze: 4" in text
+E       AssertionError: assert 'Freeze: 4' in 'Freeze: 5  (cooldown 2)  — pieces in area are frozen'
+
+final.py:824: AssertionError
+_ TestGameStateDisplayTraceability.test_jump_info_text_shows_current_player_charges_and_cooldown _
+
+self = <final.TestGameStateDisplayTraceability object at 0x102e2a2a0>
+
+    def test_jump_info_text_shows_current_player_charges_and_cooldown(self):
+        game = SpellChessGame()
+        game.cast_jump(chess.E2, chess.E4)
+        text = game.jump_info_text()
+    
+        assert "Jump: 2" in text
+>       assert "cooldown 2" in text
+E       AssertionError: assert 'cooldown 2' in 'Jump: 2  (cooldown 1)'
+
+final.py:840: AssertionError
+- generated xml file: /Users/prashantrao/PythonWorkspace/5801/output/final_py_20260430_130555/pytest_report.xml -
+=========================== short test summary info ============================
+FAILED final.py::TestFreezeTarget::test_freeze_affects_opponent_not_caster - ...
+FAILED final.py::TestNewGameResetsBoard::test_board_resets_after_moves - Asse...
+FAILED final.py::TestFreezeOpponent::test_white_casts_freeze_opponent_is_black
+FAILED final.py::TestFreezeOpponent::test_black_casts_freeze_opponent_is_white
+FAILED final.py::TestFreezeSelf::test_freeze_effect_color_is_not_caster_white
+FAILED final.py::TestFreezeSelf::test_freeze_effect_color_is_not_caster_black
+FAILED final.py::TestFreezeSelf::test_freeze_on_self_does_not_affect_self - A...
+FAILED final.py::TestCenterSquareIncluded::test_center_included_for_every_square
+FAILED final.py::TestCenterSquareIncluded::test_center_corner_a1 - assert 0 i...
+FAILED final.py::TestCenterSquareIncluded::test_center_corner_h1 - assert 7 i...
+FAILED final.py::TestCenterSquareIncluded::test_center_corner_a8 - assert 56 ...
+FAILED final.py::TestCenterSquareIncluded::test_center_corner_h8 - assert 63 ...
+FAILED final.py::TestCenterSquareIncluded::test_center_left_edge - assert 24 ...
+FAILED final.py::TestCenterSquareIncluded::test_center_right_edge - assert 39...
+FAILED final.py::TestCenterSquareIncluded::test_center_bottom_edge - assert 4...
+FAILED final.py::TestCenterSquareIncluded::test_center_top_edge - assert 60 i...
+FAILED final.py::TestSquareCount::test_midboard_e4 - assert 8 == 9
+FAILED final.py::TestSquareCount::test_midboard_d5 - assert 8 == 9
+FAILED final.py::TestSquareCount::test_left_edge_a4 - assert 5 == 6
+FAILED final.py::TestSquareCount::test_right_edge_h5 - assert 5 == 6
+FAILED final.py::TestSquareCount::test_bottom_edge_e1 - assert 5 == 6
+FAILED final.py::TestSquareCount::test_top_edge_e8 - assert 5 == 6
+FAILED final.py::TestSquareCount::test_corner_a1 - assert 3 == 4
+FAILED final.py::TestSquareCount::test_corner_h1 - assert 3 == 4
+FAILED final.py::TestSquareCount::test_corner_a8 - assert 3 == 4
+FAILED final.py::TestSquareCount::test_corner_h8 - assert 3 == 4
+FAILED final.py::TestExactMembership::test_a1_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_h1_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_a8_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_h8_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_a4_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_e1_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_e8_exact - AssertionError: assert ...
+FAILED final.py::TestExactMembership::test_exact_match_all_64_squares - Asser...
+FAILED final.py::TestFreezeDuration::test_freeze_expires_after_frozen_player_completes_one_move
+FAILED final.py::TestFreezeCooldown::test_freeze_cooldown_counts_down_on_casters_turn_starts
+FAILED final.py::TestJumpKingRestriction::test_jump_rejects_own_king - assert...
+FAILED final.py::TestJumpEmptyDestination::test_jump_rejects_occupied_destination_own_piece
+FAILED final.py::TestJumpEmptyDestination::test_jump_rejects_occupied_destination_opponent_piece
+FAILED final.py::TestJumpRange::test_jump_rejects_distance_3 - assert True is...
+FAILED final.py::TestFreezeCharges::test_freeze_charge_decrements_after_successful_cast
+FAILED final.py::TestFreezeCharges::test_freeze_charge_decrements_for_black_after_successful_cast
+FAILED final.py::TestFreezeCharges::test_freeze_charge_cannot_go_below_zero
+FAILED final.py::TestJumpChargesAndCooldown::test_jump_cooldown_counts_down_on_casters_turn_starts
+FAILED final.py::TestJumpChargesAndCooldown::test_double_jump_in_second_turn
+FAILED final.py::TestGameResets::test_new_game_resets_board - AssertionError:...
+FAILED final.py::TestGameResets::test_new_game_resets_get_legal_moves - asser...
+FAILED final.py::TestGameResets::test_new_game_resets_jumps_remaining - asser...
+FAILED final.py::TestFrozenOriginMoveRestriction::test_make_move_rejects_move_from_frozen_origin
+FAILED final.py::TestGameStateDisplayTraceability::test_freeze_info_text_shows_current_player_charges_and_cooldown
+FAILED final.py::TestGameStateDisplayTraceability::test_jump_info_text_shows_current_player_charges_and_cooldown
+======================== 51 failed, 53 passed in 0.86s =========================
+
+STDERR
+------
+
+
+Exit code: 1
